@@ -110,3 +110,9 @@ In `spec.tempate.spec` then, we start the actual definition of the **Pod** which
 </span>
 
 ##### Rolling Updates
+When updates to container images, ports, volumes and mounts are done, a `rollling update` is triggered. This `rolling update` creates a new `Revision`.
+*Dynamic operations like scaling and labeling do not trigger a rolling update, neither a Revision number.*
+
+During a **rolling update** a replica set B is created and scaled up to the number of pods the last revision number had, same that willscaled down to 0 pods (stop running).
+
+>Rolling Updates are also for controllers, deamonsets and statefullsets.
