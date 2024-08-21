@@ -66,3 +66,32 @@ In order to create the bucket (in summary) you need to get the secrets and then 
 - -MR: we create a new branch, "new-strapi-instannces", den push to this new branch with the commint message of the strapi-ID of the instances.
 
 - Go to thier argoCD gitlab to verify the push of the new files.
+
+## Geo mobile DB cluster
+*for postgres db*
+
+they have High Availability in the prod and staging
+but the issue is that in staging we have 2 primary pods for db instead of only one primary and 2 slaves. THis is due a bug in postgres we still dont have this clear
+
+documentation to see the sstatus of the DB replica status: `https://gitlab.admin.hundertserver.com/kubernetes/geo.fra1/-/tree/main/postgis-staging?ref_type=heads#get-repmgr-status`
+
+After checking the status on the 3 pods you can see in which pod relies the error, as one of this will double the information of which one is the percieved as the primary one.
+
+### solution
+restart / delete the pod
+
+## Upgrade vault
+in Vault we have
+we actually didnt have resources
+
+
+so he scale down the (scale --replicas 0 ) pods we are not using (0/2 for example) and doing this we get more resources free to upgrade vault in the worker nodes
+
+`kubectl exec vault-0 -- vault operator raft list-peers`
+we execute this inside the vault-0 pod and see the 3 pods/ containers runing vault in this 3 -piece cluster.
+you would have to run this list peers command for all 3 vault pods to ensure the information is being seen the same on all the pods.
+
+
+### Difference between delete and scale down
+- **scale down pods:** changes the deployment info to the number of replicas u specify with `--replicas` flag.
+- **delete pod:** as soon as you delete a pod a pod gets terminated k8s will terminate the pod but at the same time recreate it cause the replicaset has 1 pod set so it has to have a pod created.
