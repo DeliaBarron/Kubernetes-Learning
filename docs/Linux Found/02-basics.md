@@ -1,4 +1,4 @@
-# Basics of Kubernetes
+# 02 Basics of Kubernetes
 
 ## Kubernetes Architecture
 *See picture in course*
@@ -12,14 +12,21 @@ Kubernetes is made of **control planes**, that run a API server, scheduler. cont
 - **kube-proxy** manages networking rules, exposing the container to others in the same network or in the outside world.
 
 ## Terminology
+### Containers
 Containers are part of a larger Object called <span style="color:mediumslateblue">Pods</span>.
 Containers inside a Pod share the same:
 - Ip address
 - access to storage
 - namespace
 
+### Namespaces
 Namespaces (shortly) are a method by which a single cluster used by an organization can be divided and categorized into multiple sub-clusters and managed individually.
 
-**Orchestration** is done through *watch-loops* called controllers or operators that call for an object state to the api and matches the desired state with the current one.
+
+### Orchestration
+**Orchestration** is done through *watch-loops* called controllers or operators that call for an object state to the API and matches the desired state with the current one.
 
 For controlling containers, the **Deployment** operator is used. It applies a ***ReplicaSet*** that will create or terminate Pods until the status matches the `podSpec`.
+
+
+
