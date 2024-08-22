@@ -81,6 +81,7 @@ After checking the status on the 3 pods you can see in which pod relies the erro
 restart / delete the pod
 
 ## Upgrade vault
+
 in Vault we have
 we actually didnt have resources
 
@@ -95,3 +96,100 @@ you would have to run this list peers command for all 3 vault pods to ensure the
 ### Difference between delete and scale down
 - **scale down pods:** changes the deployment info to the number of replicas u specify with `--replicas` flag.
 - **delete pod:** as soon as you delete a pod a pod gets terminated k8s will terminate the pod but at the same time recreate it cause the replicaset has 1 pod set so it has to have a pod created.
+
+
+## Joining a new worker node
+
+- staging cluster is running in hetzner where we have a 'Hetzner robot interfaceaccount.
+- there we can see the worker nodes and the control plane  for `cloudwifi` Frederix.
+
+
+you log in to another worker to compae values for the new
+-  got to HS+ > servergrouups > cloudwifi > staingin> workers and add a new VM with the new ip private and public ip that hetzner gave us.
+
+_ go to the other past worker and check for the history to see what was done to set up
+
+- update and upgrade
+- install vim
+- add /etc/hosts : add control plane ip and hostname and the hostname and ip of the new worker itself to its own /etc/hosts
+- add the monitoring hostname to /etc/hosts too
+- add puppetserver (puppet1.bb) to the etc/hosts cause we dont have vpn so we have to access puppet from internet
+
+```
+10.0.0.6 worker4.cloudwifi-staging.frederix.srservers.net worker4
+127.0.0.1 localhost
+
+10.0.0.2 controlplane1.cloudwifi-staging.frederix.srservers.net controlplane1
+
+# The following lines are desirable for IPv6 capable hosts
+::1 ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+ff02::3 ip6-allhosts
+
+37.61.211.3 puppet1.bb.srservers.net puppet
+138.201.32.164 mon1.hub1.srservers.net mon1
+
+```
+- set hostname: `hostnamectl set-hostname worker4.cloudwifi-staging.frederix.srservers.net`
+- run a reboot to confirm: `$ reboot`
+- Edit the cloudinit configuration file and comment the lines to avoid hostname update and etc/hosts file updates:
+ `vim /etc/cloud/cloud.cfg`
+
+ ```
+ cloud_init_modules:
+ ...
+ # -update_hostname
+ # -update_etc_hosts
+ ...
+ ```
+
+- install puppet agent:
+    - `wget https://apt.puppet.com/puppet7-release-bullseye.deb`
+    - `dpkg -i puppet7-release-bullseye.deb`
+    - `apt update`
+    - `apt install puppet-agent`
+    - `ping puppet`  # puppet as it is set like that in /etc/hosts
+
+- Copy the HS+ server group UUID to the file /root/sr_uuid `
+    - `echo "678959d4-6528-4b55-81f1-ce2e0e21d053" > sr_uuid`
+
+- swapoff -a   # as k8s doesn support it
+
+- as puppet is accessed from the public network we have to do some firewall rules
+- in `fw1.hub2` server we have the forwarding rules for accessing the `puppet1.bb` server from a public network.
+
+- `ssh fw1.hub2`
+- list the previous rules for the other workers, copy and edit them with the next information:
+    - `sh conf c`
+    - rule id has to change/ increased by 10
+    - destination addres: puppet1.bb IP `37.61.211.3`
+    - IP of the source `eth0`: (check on the new worker server by doing `ip addres show`)
+
+To set this rules you should run:
+```
+$ config
+- paste the new rules
+$ commit
+$ save
+```
+
+update the same k8s version on the new worker node:
+```
+- apt-mark unhold kubeadm && apt-get update && apt-get install -y --allow-downgrades kubeadm=1.26.3-1.1 && apt-mark hold kubeadm
+- apt-mark unhold kubelet kubectl && apt-get update && apt-get install -y --allow-downgrades kubelet=1.26.3-1.1 kubectl=1.26.3-1.1 && apt-mark hold kubelet kubectl
+
+
+```
+
+k8s control plane creates token to join workers but this token is only temporarily so we need the command to print this token even when the time is out:
+`kubeadm token create --print-join-command --node-name -host-name  or something like that` this has to be run in the control plane to get the token for the command that we are gonna run as follows in the worker node.
+
+- this runs in the worker:
+kubeadm join api.cloudwifi-staging.frederix.k8s.hundertserver.com:6443 --token $TOKEN --discovery-token-ca-cert-hash $CERT_HASH --node-name `hostname -f`
+
+
+
+##

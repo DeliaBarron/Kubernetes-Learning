@@ -26,6 +26,6 @@ fi
 
 docker pull squidfunk/mkdocs-material
 echo "Creating and running mkdocs docker container"
-docker run --rm -it -d -p 8000:8000 -v $(pwd):/docs --name mkdocs squidfunk/mkdocs-material
+docker run --rm -it -d -p 8000:8001 -v $(pwd):/docs --name mkdocs squidfunk/mkdocs-material
 sleep 3
-google-chrome "http://localhost:8000/"
+google-chrome "http://localhost:8001/"
