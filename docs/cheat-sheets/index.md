@@ -4,8 +4,8 @@
 - `kubcetl get pods`
 
 
-kubectl get nodes
-kubectl describe node <node-name>
+`kubectl get nodes`
+`kubectl describe node <node-name>`
 
 To get the name of the cluster at the monitoring (prometheus) you can run:
 

@@ -192,4 +192,46 @@ kubeadm join api.cloudwifi-staging.frederix.k8s.hundertserver.com:6443 --token $
 
 
 
-##
+## Upgrade Kubernetes
+kubectl get nodes -o wide
+
+controlplae1
+- goes to hs+
+- servergroup fro master 54
+-  change the k8s version on workers and the controlplane  to 1.27
+- cat source.list to see the previous k8s version
+then run puppet agent -tv and confirm that the 1.27 is there now
+- apt update
+- `apt-cache madison kubeadm:` we see the latest stable version for the actual repo that u have/u can use (the one at the top) this is the version we will write to the commands of the `apt mark hold...` for each packages
+so do the madison command for kubeadm and check the version , compare the version we have and if different, run the mark hold command with the corresponding version for each packafge (kubeadm, cni, cri-tools).
+
+
+- do the madison command for kubeadm, kubernetescni , cri-tools
+
+### CNI
+- apt-mark command
+- kubeadm upgrade plan: check if the cluster is ready fot the upgrade and if yes it gives u the command  to do so. and the table of what is gonna be upgraded
+- run the command that it gives u (upgrade apply)
+
+> kubeadm needs to be upgrade to be able to able to be drained
+
+
+### kubelet and kubectl
+we need to drain the node to make no pod to be running in  the node. K8s wont scheduled pods on this node anymore by running the `drain` command
+- run the upgrade commands
+- run the uncordon to enable the node
+
+
+### now we change to workers
+run the commands
+- kubeadm upgrade node # this is instead of the plan. plan is ONLY for the main control plane
+- delete ampdir data is needed for the workers only
+- drain
+- uncordon until the node shows `Ready` status
+-
+
+verify that all the pods in all namespaces are running with `kubectl get pod --all-namespaces -o wide | grep worker1` or 2 or control plane to see that the upgrade we did in the specific node was done sucessfully
+
+>restarting the service daemon is only for the kubelet service. Is a service running on each worker.
+
+> do this proces for controlplane and then the workers and once you are done you have to repeat the process for the next k8s version
