@@ -207,6 +207,8 @@ so do the madison command for kubeadm and check the version , compare the versio
 
 
 - do the madison command for kubeadm, kubernetescni , cri-tools
+- Use this version to replace the value of the versions on the apt install commands
+-
 
 ### CNI
 - apt-mark command
@@ -235,3 +237,48 @@ verify that all the pods in all namespaces are running with `kubectl get pod --a
 >restarting the service daemon is only for the kubelet service. Is a service running on each worker.
 
 > do this proces for controlplane and then the workers and once you are done you have to repeat the process for the next k8s version
+
+
+
+### Upgrade order of commands
+
+```
+apt update
+apt-mark unhold cri-tools kubernetes-cni && apt-get update && apt-get install -y cri-tools=1.26.0-1.1 kubernetes-cni=1.2.0-2.1 && apt-mark hold cri-tools kubernetes-cni
+apt-mark unhold kubeadm && apt-get update && apt-get install -y kubeadm=1.26.15-1.1 && apt-mark hold kubeadm
+kubeadm upgrade plan
+kubeadm upgrade apply v1.30.4
+
+
+kubectl drain <node-to-drain> --ignore-daemonsets
+apt-mark unhold kubelet kubectl && apt-get update && apt-get install -y kubelet=1.26.15-1.1 kubectl=1.26.15-1.1 && apt-mark hold kubelet kubectl
+systemctl daemon-reload && systemctl restart kubelet
+kubectl uncordon <node-to-uncordon>
+
+
+Workers:
+apt-mark unhold cri-tools kubernetes-cni && apt-get update && apt-get install -y cri-tools=1.26.0-1.1 kubernetes-cni=1.2.0-2.1 && apt-mark hold cri-tools kubernetes-cni
+apt-mark unhold kubeadm && apt-get update && apt-get install -y kubeadm=1.26.15-1.1 && apt-mark hold kubeadm
+kubeadm upgrade node
+(at localhost) kubectl drain <node-to-drain> --ignore-daemonsets --delete-emptydir-data
+apt-mark unhold kubelet kubectl && apt-get update && apt-get install -y kubelet=1.26.15-1.1 kubectl=1.26.15-1.1 && apt-mark hold kubelet kubectl
+systemctl daemon-reload && systemctl restart kubelet
+
+## Check if the node is ready
+(on local)kubectl uncordon <node-to-uncordon>
+
+
+------------NOTES -----------------------------
+CONTROLPLANE1
+kuber8 to 1.26 in HS
+puppet agent -tv
+
+
+kubeadm upgrade plan
+Got the kubeproxy error> went to kube-system ns > deleted the key that the error show> kubectl edit cm kube-proxy > kubectl rollout restart daemonset.apps/kube-proxy
+Once the pods got the new edit oapt-mark unhold cri-tools kubernetes-cni && apt-get update && apt-get install -y cri-tools=1.26.0-1.1 kubernetes-cni=1.2.0-2.1 && apt-mark hold cri-tools kubernetes-cni
+
+
+
+dns utils is use for debuggin
+```

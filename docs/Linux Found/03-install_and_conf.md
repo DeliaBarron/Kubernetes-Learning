@@ -1,6 +1,6 @@
 # 03 Installation and Configuration
 ## kubeadm and installation
-`kubeadm` is a tool used to deploy a kubernetes cluster.
+`kubeadm` is a tool used to deploy a kubernetes cluster. It creates a cluster and adds nodes.
 - `kubeadm init`: you run on a control plane node
 - `kubeadm join`: tha run on your worker nodes
 This bootstraps the cluster.
@@ -8,6 +8,10 @@ This bootstraps the cluster.
 If you do a `kubeadm -h` you will get a bit of information on the process of creating a new k8s cluster.
 
 > For further understanding of the fundamentals of Kubernetes and how the core components fit together, take a look at the **[Kubernetes The Hard Way](https://github.com/kelseyhightower/kubernetes-the-hard-way.git)** which guides you through bootstrapping a basic Kubernetes cluster with all control plane components running on a single node, and two worker nodes, which is enough to learn the core concepts.
+
+- `/.kube/config` file contains: Endpoints, SSL Keys, Contexts...
+
+- `kubectl`:  is the main binary for workin with objects on kubernetes cluster.
 
 ## Installation considerations
 With *systemd*  from Linux, Kubernetes componetns will end up being run as *systemd unit files* or via *kubelet* running on the head node.
@@ -34,7 +38,7 @@ When applying the cilium yaml file in my delia-cka namespace I got the error tha
 - `kubectl get desployment -o yaml`: retrieves the exact state of the deployment in YAML format.
 - `kubectl create deployment two --image=nginx --dry-run=client -o yaml`: the dry-run flag shows what would happen without having it actually happen.
 
-**Create a sever**
+**Create a service**
 - `kubectl expose -h`: command to expose a **resource** as a service.
 Some of this services are: pod, service(svc), replicationcotroller (rc), deployment(deploy), replicaset (rs).
 The **kubectl expose** command uses the selector for that resource as the selector for a new service on the specified port.
@@ -56,6 +60,14 @@ If a client or another Pod within the same Kubernetes cluster wants to access th
 
 So the service would recive the request and forward it to one of the `Endpoints` (pods  IP). SO the service acts like a proxy that routes tracffic to Pods.
 
+- `kubectl get ep nginx` :shows the internal IP that the pod in this cluster will have.
+
+- `kubectl scale deployment nginx --replicas=3` : so if we scale our deployment to consist of 3 pods then if we do another - `kubectl get ep nginx` we will see that the 3 Pods inside our cluster will have a designated internal IP.
+
+
+> Note: A cluster pod
+
+** Access form Outside the Cluster**
 
 
 ### Dig Deeper TriniD!
