@@ -181,3 +181,25 @@ $ curl --cert /tmp/client.pem --key /tmp/client-key.pem \
  would be the same as the following:
 
  - `kubectl logs firstpod`
+
+ ## API Maturity
+ - Alpha: may be buggy and is disabled by default.
+ - Beta: enabled by default. Not been tested enough to be called stable.
+ - Stable: denoted by only an integrer and preceded by letter *v*.
+
+
+ ## Knowledge Check
+- Kubernetes uses a RESTful API-driven architecture, accepting standard HTTP verbs. True or False?
+TRUE
+
+- _____________ allow for metadata to be included with an object that may be helpful outside the Kubernetes object interaction.
+ANNOTATIONS
+
+- Which of the following must be included in a pod template?
+kind, metadata, spec, apiVersion
+
+- What should be appended to the command in order to affect every namespace with kubectl?
+--all-namespaces
+
+- All objects are restricted to a single namespace. True or False?
+FALSE

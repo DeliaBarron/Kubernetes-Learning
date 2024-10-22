@@ -91,7 +91,6 @@ This is usefull for running background tasks like:
 
 
 
-
 ## StatefulSet
 
 Different to a Deployment is that StatefulSet needs **Service** that is gonna be exposing out Pods.
