@@ -109,10 +109,29 @@ The pods will be created using information at the `spec.template` so in this cas
 In `spec.tempate.spec` then, we start the actual definition of the **Pod** which creates a single container using the `nginx:1.20.2` image.
 </span>
 
-##### Rolling Updates
-When updates to container images, ports, volumes and mounts are done, a `rollling update` is triggered. This `rolling update` creates a new `Revision`.
-*Dynamic operations like scaling and labeling do not trigger a rolling update, neither a Revision number.*
+### Rollout Strategy
+Rollout is the process of deploying a new version of an application or services. There are 2 common rollout strategies. Rolling Update and recreate.
 
-During a **rolling update** a replica set B is created and scaled up to the number of pods the last revision number had, same that willscaled down to 0 pods (stop running).
+**When using Deployments a Rollout is only triggered by updating the Deployment's Pod template**
 
->Rolling Updates are also for controllers, deamonsets and statefullsets.
+#### Rolling upgrade
+Gradually replaces pods runniing the old version with the old version with new ones.
+
+#### Rolling recreate
+Deletes all the pods and creates new ones. Rollback is the process of undoing a rollout and reverting to a previous version of the application.
+
+> Rolling Updates are also for controllers, deamonsets and statefullsets.
+
+
+#### Commands
+- Update the container image of a deployment.
+`kubectl set image deployment/<deployment_name> <container_name>=<new_image>`
+
+- Retrieve the status of a deployment rollout
+`kubectl rollout status deployment/<deployment_name>`
+
+List revision history of a deployment
+`kubectl rollout history deployment/<deployment_name>`
+
+Rollback a deployment to a previous revision
+`kubectl rollout undo deployment/<deployment_name>`

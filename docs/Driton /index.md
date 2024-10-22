@@ -282,3 +282,32 @@ Once the pods got the new edit oapt-mark unhold cri-tools kubernetes-cni && apt-
 
 dns utils is use for debuggin
 ```
+
+
+
+## Upgrade resources
+- Drain the node
+- Proxmox UI u change the resource to what they need
+- In proxmox u reboot the machine
+- back in k8s uncordon
+
+> For geomobile we need a resolve.conf file in the worker node to be able to start pods
+
+
+
+For data bases, we go to the customer docu > postgres >
+rempgr  > so you run the repmgr command on the postgres pod to see if the cluster is ready
+
+once that is running in all postgres pods you can go ahead with the second worker so again:
+- k drain worker2  ....
+- if we get an error od a pod not with a deploymet then we delete the pod,
+if the error continues saying the pod could note get evicted, we need to do a rollout to delete it but create in another worker.
+
+
+- go to proxmox, change resources from the secon worker2 > ssh to this worker and shutdown and start again  (from terminal isbetter)
+- do the repmgr commmands
+- k uncordon
+- k get nodes to see the are starting
+
+
+
