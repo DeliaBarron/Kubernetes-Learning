@@ -129,23 +129,58 @@ The requirement from Kubernetes is the following:
 #### 4.1 Basic Node Maintenance
 > we will backup the etcd database then update the version of Kubernetes used on control plane nodes andworker nodes.
 
-- To check out the etcdctl command, connect to one controlplane, log into an etcd container:
-- `kubectl -n kube-system exec -it etcd-controlplane...  -- sh`
-- `cd /etc/kubernetes/pki/etcd/`
-- `echo *`
-- to see the certificates
+In order to use TLS, find the three files that need to be passed using the `etcd`
 
+- `cd /etc/kubernetes/pki/etcd/`   ## pki= public key infrastructure
+- `echo *`       ## echo cause etcd image doesnt contain find or ls commands
+- to see the certificates.
 - `etcdctl -h`
 
-> Upgrading the Cluster
+
+The snapshots of the etcd cluster must go to the etcd containers at `/etc/kubernetes/manifests/etcd.yaml`  `data-directory`
+
+In order to access the etcd api you need always the certificates being passed to the commands.
+- To check the etcd db health:
+
+`kubectl -n kube-system exec etcd-controlplane1.staging.pro54.srservers.net  -it -- etcdctl --write-out=table --cluster  --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/peer.crt --key=/etc/kubernetes/pki/etcd/peer.key endpoint health`
+
+- To dislay it in a table form AND | OR for the whole cluster:
+`kubectl -n kube-system exec etcd-controlplane1.staging.pro54.srservers.net  -it -- etcdctl --write-out=table --cluster  --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/peer.crt --key=/etc/kubernetes/pki/etcd/peer.key endpoint health`
+
+Create a snapshot:
+
+- `kubectl -n kube-system exec etcd-controlplane1.staging.pro54.srservers.net  -it -- etcdctl  --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/peer.crt --key=/etc/kubernetes/pki/etcd/peer.key --endpoints=https://127.0.0.1:2379 snapshot save /var/lib/etcd/snapshot.db`
+
+Save a backup of:
+
+- snapshot: The snapshot of etcd database stores the entire Kubernets cluster state.
+- kubeadm-config.yaml: file used to initialize the cluster, crutial for rebuilding the control plane and has cluster settings.
+- PKI(public key infrastructure): keys for secure communication.
+
+
+
+
+
+#### Upgrading the Cluster
 CONTROL PLANE:
-- updating package metadata for API: `sudo apt update`
-- View the available packages: `apt-cache madison kubeadm`
+- updating package metadata for API:
+
+ `sudo apt update`
+- View the available packages:
+ `apt-cache madison kubeadm`
+
 - Remove the hold on kubeadm and update the package. Remember to update to the next major release's update
-**It can be used to place a package on hold (so it won't be automatically upgraded) or unhold it (so it can be upgraded)**: `apt-mark unhold kubeadm`
+**It can be used to place a package on hold (so it won't be automatically upgraded) or unhold it (so it can be upgraded)**:
+ `apt-mark unhold kubeadm`
 - `apt-get install -y kubeadm=<last-versionfrom-madison>`
+
 - hold the package again to prevent updates along with other software as if kubeadm is automatically upgraded during routine system update, but kubelet and kubectl arent, it could result in version mismatches that might destibilize the cluster.
-- `apt-mark hold kubeadm`: put to hold again .
+
+`apt-mark hold kubeadm`: put to hold again .
+
+- Check the new version
+
+`kubeadm version`
 
 *kubeadm upgrade in all controlplane one by one,*
 *then you drain worker nodes and upgrade kubeproxy, kubectl and kubelet one by one*

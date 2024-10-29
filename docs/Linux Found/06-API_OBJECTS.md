@@ -89,17 +89,41 @@ This is usefull for running background tasks like:
 - Networking agents like Calico
 - Storage Daemons to provide node-local storage
 
+DaemonSets Pods are gonna get deployed by K8s even when theres toleration problems as DaemonSet Pods are more critical than those of StatefulSet or Deployment.
+
+**To communicate to the DaemonSets Pods**
+
+- By using a `ClusterIP` service which allows to select pods through **label selector** and use the service to reach a daeomn on a random node. (No way to reach specific node)
+
+- DNS: Create a `headless service` and using the endpoints resource or retrieve multiple A records from DNS.
+
+- NodeIP and Known Port: Pods in the DaemonSet can use a `hostPort`, so that the pods are reachable via the node IPs. Clients know the list.
+
 
 
 ## StatefulSet
 
 Different to a Deployment is that StatefulSet needs **Service** that is gonna be exposing out Pods.
 
+## Autoscaling
+In K8s there is **HPA** (Horizontal Pod Autoscalers)
+Automatically increases or decreases the number of Pods in response to the current demand of resources.
+
+It can be applied to:
+- Deployments
+- ReplicaSets
+- StatefulSets
+
+HPA checks on the metrics which are retrieved every 15 sec. If the CPU usage increases for ex. Then HPA will increase the number of pods to handle the increased load.
+
+
+## Jobs
+
+
 --------------------------------------
 
 ## Notes
 k8s provides different APIs for running pods like Deployments(web-servers, proxy), statfulsets(db) and daemonsets.
-
 
 
 so to understand deployments:

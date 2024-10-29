@@ -200,7 +200,7 @@ controlplae1
 - servergroup fro master 54
 -  change the k8s version on workers and the controlplane  to 1.27
 - cat source.list to see the previous k8s version
-then run puppet agent -tv and confirm that the 1.27 is there now
+- then run puppet agent -tv and confirm that the 1.27 is there now
 - apt update
 - `apt-cache madison kubeadm:` we see the latest stable version for the actual repo that u have/u can use (the one at the top) this is the version we will write to the commands of the `apt mark hold...` for each packages
 so do the madison command for kubeadm and check the version , compare the version we have and if different, run the mark hold command with the corresponding version for each packafge (kubeadm, cni, cri-tools).
@@ -208,7 +208,9 @@ so do the madison command for kubeadm and check the version , compare the versio
 
 - do the madison command for kubeadm, kubernetescni , cri-tools
 - Use this version to replace the value of the versions on the apt install commands
--
+
+> once you run the command, the output will show you the `kubeadm upgrade apply` see below for **order od commands**.
+
 
 ### CNI
 - apt-mark command
@@ -255,6 +257,8 @@ apt-mark unhold kubelet kubectl && apt-get update && apt-get install -y kubelet=
 systemctl daemon-reload && systemctl restart kubelet
 kubectl uncordon <node-to-uncordon>
 
+> k get nodes to see if it up and ready
+
 
 Workers:
 apt-mark unhold cri-tools kubernetes-cni && apt-get update && apt-get install -y cri-tools=1.26.0-1.1 kubernetes-cni=1.2.0-2.1 && apt-mark hold cri-tools kubernetes-cni
@@ -276,12 +280,15 @@ puppet agent -tv
 
 kubeadm upgrade plan
 Got the kubeproxy error> went to kube-system ns > deleted the key that the error show> kubectl edit cm kube-proxy > kubectl rollout restart daemonset.apps/kube-proxy
-Once the pods got the new edit oapt-mark unhold cri-tools kubernetes-cni && apt-get update && apt-get install -y cri-tools=1.26.0-1.1 kubernetes-cni=1.2.0-2.1 && apt-mark hold cri-tools kubernetes-cni
+Once the pods got the new edit apt-mark unhold cri-tools kubernetes-cni && apt-get update && apt-get install -y cri-tools=1.26.0-1.1 kubernetes-cni=1.2.0-2.1 && apt-mark hold cri-tools kubernetes-cni
 
 
 
 dns utils is use for debuggin
 ```
+
+
+> when we have `mysql` we need to check the logs of the nodes to see that the db cluster to be back and in sinc to start with another worker node.
 
 
 
