@@ -245,31 +245,39 @@ verify that all the pods in all namespaces are running with `kubectl get pod --a
 ### Upgrade order of commands
 
 ```
-apt update
-apt-mark unhold cri-tools kubernetes-cni && apt-get update && apt-get install -y cri-tools=1.26.0-1.1 kubernetes-cni=1.2.0-2.1 && apt-mark hold cri-tools kubernetes-cni
-apt-mark unhold kubeadm && apt-get update && apt-get install -y kubeadm=1.26.15-1.1 && apt-mark hold kubeadm
-kubeadm upgrade plan
-kubeadm upgrade apply v1.30.4
+- apt update
+- apt-mark unhold cri-tools kubernetes-cni && apt-get update
+- apt-get install -y cri-tools=1.26.0-1.1 kubernetes-cni=1.2.0-2.1
+- apt-mark hold cri-tools kubernetes-cni
+- apt-mark unhold kubeadm && apt-get update && apt-get install -y kubeadm=1.26.15-1.1 && apt-mark hold kubeadm
+- kubeadm upgrade plan ## upgrade nod to the rest cpns and nodes!!!!!!!!!
+- kubeadm upgrade apply v1.30.4
 
 
-kubectl drain <node-to-drain> --ignore-daemonsets
-apt-mark unhold kubelet kubectl && apt-get update && apt-get install -y kubelet=1.26.15-1.1 kubectl=1.26.15-1.1 && apt-mark hold kubelet kubectl
-systemctl daemon-reload && systemctl restart kubelet
-kubectl uncordon <node-to-uncordon>
+- kubectl drain <node-to-drain> --ignore-daemonsets
+- apt-mark unhold kubelet kubectl
+- apt-get update
+- NDE apt-get install -y kubelet=1.26.15-1.1 kubectl=1.26.15-1.1
+- apt-mark hold kubelet kubectl
+-NODE  systemctl daemon-reload && systemctl restart kubelet
+- kubectl uncordon <node-to-uncordon>
 
-> k get nodes to see if it up and ready
+> `k get nodes` to see if it up and ready
 
 
 Workers:
-apt-mark unhold cri-tools kubernetes-cni && apt-get update && apt-get install -y cri-tools=1.26.0-1.1 kubernetes-cni=1.2.0-2.1 && apt-mark hold cri-tools kubernetes-cni
-apt-mark unhold kubeadm && apt-get update && apt-get install -y kubeadm=1.26.15-1.1 && apt-mark hold kubeadm
-kubeadm upgrade node
-(at localhost) kubectl drain <node-to-drain> --ignore-daemonsets --delete-emptydir-data
-apt-mark unhold kubelet kubectl && apt-get update && apt-get install -y kubelet=1.26.15-1.1 kubectl=1.26.15-1.1 && apt-mark hold kubelet kubectl
-systemctl daemon-reload && systemctl restart kubelet
+
+- apt-mark unhold cri-tools kubernetes-cni && apt-get update && apt-get install -y cri-tools=1.26.0-1.1 kubernetes-cni=1.2.0-2.1 && - apt-mark hold cri-tools kubernetes-cni
+- apt-mark unhold kubeadm && apt-get update && apt-get install -y kubeadm=1.26.15-1.1 && apt-mark hold kubeadm
+- kubeadm upgrade node
+(at localhost)
+- kubectl drain  worker1.staging.pro54.srservers.net--ignore-daemonsets --delete-emptydir-data
+- apt-mark unhold kubelet kubectl && apt-get update && apt-get install -y kubelet=1.26.15-1.1 kubectl=1.26.15-1.1 && apt-mark hold - kubelet kubectl
+- systemctl daemon-reload && systemctl restart kubelet
 
 ## Check if the node is ready
-(on local)kubectl uncordon <node-to-uncordon>
+(on local)
+- kubectl uncordon <node-to-uncordon>
 
 
 ------------NOTES -----------------------------
@@ -278,7 +286,7 @@ kuber8 to 1.26 in HS
 puppet agent -tv
 
 
-kubeadm upgrade plan
+- kubeadm upgrade plan
 Got the kubeproxy error> went to kube-system ns > deleted the key that the error show> kubectl edit cm kube-proxy > kubectl rollout restart daemonset.apps/kube-proxy
 Once the pods got the new edit apt-mark unhold cri-tools kubernetes-cni && apt-get update && apt-get install -y cri-tools=1.26.0-1.1 kubernetes-cni=1.2.0-2.1 && apt-mark hold cri-tools kubernetes-cni
 
@@ -315,6 +323,9 @@ if the error continues saying the pod could note get evicted, we need to do a ro
 - do the repmgr commmands
 - k uncordon
 - k get nodes to see the are starting
+
+
+
 
 
 

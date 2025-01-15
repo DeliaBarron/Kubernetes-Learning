@@ -118,6 +118,54 @@ HPA checks on the metrics which are retrieved every 15 sec. If the CPU usage inc
 
 
 ## Jobs
+Jobs are in the **batch** group
+They are used to run a set number of pods to completion.
+if a pod fails, it will be restarted until the number of completions is reached.
+
+Contrary to a `CronJob` a `Job` is not scheduled. It will run when you run it and terminate when the task is done.  "just once or on demand."
+
+A `CronJob` is to run **recurring tasks** that are schedule. "Use a CronJob for tasks that need to run repeatedly on a schedule."
+
+Batch Kobs are often used for operations or processes that can run async. in the background.
+They are **Non-Interactive** which means the run independently without requiring user intervention during execution.
+
+> Jobs and CronJobs belong to the `batch` API group.
+
+### Work with Jobs
+- create a Job object
+
+```
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: hello-world
+spec:
+  template:
+    spec:
+      containers:
+        - name: hello-world
+          image: busybox
+          command: ["echo", "Hello, World!"]   # Ensures the pod does not restart if it completes or fails
+      restartPolicy: Never                      # Number of retries if the Job fails
+```
+
+- `kubectl apply -f job.yaml`
+
+- `kubectl get pods`
+
+- `kubectl logs <pod-name>`: to see the output of the job in that pod.
+
+
+## RBAC
+RBAC are in the **rbac.authorization.k8s.io** group.
+ This group has 4 Objects:
+
+- ClusterRole
+- Role
+- ClusterRoleBinding
+- RoleBinding
+
+
 
 
 --------------------------------------
@@ -158,3 +206,101 @@ Stateless is the way to go if you need information in a transitory manner,quickl
 
 This is used to manage stateful applications.
 
+
+
+## Lab 6.1
+
+- Get the node and port where the api is listening
+
+`k config view` | grep server
+> server: https://api.staging.pro54.k8s.hundertserver.com:443
+
+
+- crate a token secret
+
+`export token=$(kubectl create token default)`
+
+- Access the api using curl and passing the token
+
+`curl https://api.staging.pro54.k8s.hundertserver.com:443/apis --header "Authorization: Bearer $token" -k`
+
+**-k** to avoid using a cert
+
+- acces v1 api
+`curl https://api.staging.pro54.k8s.hundertserver.com:443/api/v1 --header "Authorization: Bearer $token" -k`
+
+
+## Lab 6.2 proxy
+You can set a proxy on a sidecontainer that interacts with the k8s API.
+
+- A proxy is an intermediary between the client (the one that does the curl) and the k8s API. Forwarding request from the client to the API server.
+
+- This way you dont have to both know and hardcode the api ip and you also dont need to handle the authentication tokens yourself.
+
+- The proxy typically uses the Service Account token mounted into the Pod automatically, removing the need for you to manually include an authentication header.
+
+- Using a proxy you would access the API server via the proxy at http://127.0.0.1:8001, which is portable and consistent.
+
+- The proxy hides the API server's actual endpoint, reducing the risk of exposing sensitive information.
+
+- `kubectl proxy -h`
+
+Start the proxy while setting the API prefix AND put it in the background. This will start a proxy TEMPORARILY until you close the terminal or kill the proceess.
+
+- `kubectl proxy --api-prefix=/ &`
+
+ Now use the same **curl** command, but point toward the IP and port shown by the proxy command before.
+
+ - `curl http://127.0.0.1:8001/api/`
+
+
+Stop the proxy service as we dont need it anymore (remember it was running on the background). Use the process ID to kill it. You canalso find the process ID by doing:
+
+- `ps aux | grep kubectl`
+
+
+### Sidecontainers
+These are secondary containers that run along with the main application container within the same Pod. They enhace the main app.
+
+## Lab 6.3 Working with Jobs
+Create a Job which will run a container which sleeps for three seconds then stops.
+```
+apiVersion: batch/v1   # Note they belong to batch API!
+kind: Job
+metadata:
+  name: sleepy
+spec:
+  completions: 5   # How many times the conteiner / Job will run
+  parallelism: 2   # How many pods will be deployed at a time
+  template:
+    spec:
+      containers:
+      - name: resting
+        image: busybox
+        command: ["/bin/sleep"]
+        args: ["3"]
+      restartPolicy: Never
+```
+
+---------------------------
+## Quiz
+Object for scaling and deploying an application:
+
+- Deployment
+
+
+Objects size in order from tinest to biggest:
+
+1. Container
+2. Pod
+3. ReplicaSet
+4. Deployment
+
+
+The scaling of applications are based on configuration sdone by the admin.
+`Horizontal Pod Autoscaling` **scales resources based on CPU usage.**
+
+
+CronJobs and Jobd belong to the `batch` API group.
+
+A `DaemonSet` can run just **ONE** Pod on each node.

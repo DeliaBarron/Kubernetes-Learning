@@ -1,8 +1,11 @@
 # API Access
 KubernetesThe resources endpoints are to be found at the API's. Is the main agent for communication between cluster agents from outside the cluster is the kube-apiserver.
 
-## RESTful
+## Kubectl
 kubectl makes API calls on your behalf, responding to typical HTTP verbs.
+
+**Using the Kubernetes API, kubectl makes API calls for you. With the appropriate TLS keys you could run curl as well use agolangclient.  Calls to the kube-apiserver get or set a PodSpec, or desired state.  If the request represents a new state the Kubernetes Control Plane will update the cluster until the current state matches the specified state.Some end states may require multiple requests. For example, to delete a ReplicaSet, you would first set the number of replicas to zero, then delete the ReplicaSet.An API request must pass information as JSON.kubectl converts.yaml to JSON when making an API request on your behalf. The API request has many settings, but must include apiVersion, kind and metadata, and spec settings to declare what kind of container to deploy. The spec fields depend on the object being created.**
+
 
 ## Checking Access
 The following shows what user bob could do in the default namespace and the developer namespace, using the auth can-i subcommand to query (commands and outputs):
@@ -203,3 +206,18 @@ kind, metadata, spec, apiVersion
 
 - All objects are restricted to a single namespace. True or False?
 FALSE
+
+
+## Lab 5.1
+
+Under the `.kube/config` file you can find:
+- client-cert
+- client-key
+- certificate-authority-data
+
+with `kubectl config` you can create, view, modify clusters, contexts and users.
+
+- `kubectl config view`:  list ALL cluster kubeconfigs entries.
+
+- `kubectl config get-contexts`: current cluster contexts
+

@@ -166,13 +166,16 @@ CONTROL PLANE:
 - updating package metadata for API:
 
  `sudo apt update`
+
 - View the available packages:
  `apt-cache madison kubeadm`
 
-- Remove the hold on kubeadm and update the package. Remember to update to the next major release's update
+- Remove the hold on kubeadm and update the package.
+- Remember to update to the next major release's update!!
 **It can be used to place a package on hold (so it won't be automatically upgraded) or unhold it (so it can be upgraded)**:
+
  `apt-mark unhold kubeadm`
-- `apt-get install -y kubeadm=<last-versionfrom-madison>`
+- `apt-get install -y kubeadm=<last-version-from-madison>`
 
 - hold the package again to prevent updates along with other software as if kubeadm is automatically upgraded during routine system update, but kubelet and kubectl arent, it could result in version mismatches that might destibilize the cluster.
 
@@ -182,7 +185,64 @@ CONTROL PLANE:
 
 `kubeadm version`
 
+- `kubeadm upgrade plan`
+
+- `kubeadm upgrade apply v1.30.4`
+
+- `kubectl drain cp --ignore-daemonsets`
+- To check the node you drained is now Disabled for Scheduling.
+
+`kubectl get node`
+
+- `apt-mark unhold kubelet kubectl`
+
+- `apt-get install -y kubelet=1.31.1-1.1 kubectl=1.31.1-1.1`
+
+- `apt-mark hold kubelet kubectl`
+
+- `systemctl daemon-reload && systemctl restart kubelet`
+
+- `kubectl uncordon <cp>`
+
+- Now the cp must be back to Ready Status:
+`kubectl get node`
+
 *kubeadm upgrade in all controlplane one by one,*
 *then you drain worker nodes and upgrade kubeproxy, kubectl and kubelet one by one*
+
+WORKER NODES:
+
+#### 4.2 Working with CPU and Memory Constrains
+- `kubectl create deployment <name> --image vish/stress`
+
+- `kubectl get deployment`
+
+- `kubectl describe deployment <name>`
+
+- edit the yaml deployment
+- replace with the new edited file:
+
+    `kubectl replace -f <filename.yaml>`
+
+    get the logs of the container to see the changes being applied in the right way
+
+    `kubectl get po`
+
+    `kubectl logs <po-name>`
+
+**There are immutable fields that will require you to delete and recreate the deployment such as:**
+
+-  spec.selector: The selector for Pods; if you change this, you need to create a new Deployment.
+
+- spec.template.metadata.labels: If the labels defined in the Pod template change, you need to delete and recreate the Deployment..
+
+- spec.strategy.type: Changing the deployment strategy type (e.g., from RollingUpdate to Recreate).
+
+
+#### Quiz
+- a pod canonly have assigned to it 1 IP
+- main agent on a WORKER node is: `kubelet`
+- `Service` object connects resources together and handles **Ingress** and **Egress** traffic.
+- `kube-apiserver`: main configuratio  agent on a MASTER server.
 
 
