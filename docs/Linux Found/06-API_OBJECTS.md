@@ -56,7 +56,7 @@ When you deploy an application, several objects work together to ensure the app 
 Controller which manages the state of the ReplicaSets and the pods within.
 Allows you to declare the desired state of your app.
 
-When you create a *Deployment*, Kubernetes will automatically create the specified number of Pods
+When you create a *Deployment*, Kubernetes will automatically create the specified number of Pods.
 
 > Deployments manage **ReplicaSets** making sure the new versions of your app are deployed gradually and safely.
 
@@ -67,6 +67,10 @@ Ensures the desire number of Pods are running.
 A ReplicaSet defines a **Pod template** that describes what each Pod should look like. This includes the container image, environment variables, volume mounts, etc and all pots using created by a ReplicaSet are identical based on thetemplate.
 
 The **ReplicaSet** uses a Selector to identify which Pods it manages. This **selector**  includes labels.
+
+When would you use a `replicaSet` directly instead of a Deployment? As they dont handle updated like deployments do, you would use a `replicaSet`
+- **if you dont need to update software**
+- **If you need custom update behaviour that wont work with deployments as the manage pods in bigger scale**
 
 ### Pod
 Lowest unit we can manage; it runs the application container.
