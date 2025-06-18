@@ -74,6 +74,7 @@ For each request by a Node, a `StorageClass` must be declare, otherwise the acce
 
 
 **Shared Volume Example**
+
 ```
 ...
 containers
@@ -123,4 +124,57 @@ The volume is unavailable to other pods unless it´s shared (`ReadWriteMany`)
   
   Persistent volumes are not namespaces objects BUT PVC are!
 
-  
+  > Another example
+```
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: myclaim
+spec
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 8GI
+```
+
+in the Pod
+```
+spec: 
+  container:
+....
+  volumes:
+  - name: test-volume
+  persistentVolumeClaim:
+    claimName: myclaim
+```
+
+## Dinamic Provision
+dynamic provision allows the cluster to request storage from the exterior
+the **storageClass** API allows an admin to define PV provisioner of a certain type, passing storage specific parameters.
+
+SO you declare a claim with parameters like the size and you already have a provisioner (aws, ceph,...).
+
+1. Create a PVC  " 10GI, RWO, storageClass:fast"
+2. The PVC looks at the `storageClass`  which tells K8s how to create the volume.
+
+```
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: fast-storage
+provisioner: kubernetes.io/aws-ebs  # or other backend (GCE, NFS, etc.)
+parameters:
+  type: gp2 
+```
+the provisioner plugin handles talking to the storage backend.
+
+3. K8s creates automatically the PV
+k8s talks to the storage backend, creates the PV dynamically, the PV gets bound to the PVC
+
+## Secrets
+Secrets are another k8s API resource.
+They can be manually encoded or via : `kubectl create secret`
+
+Secrets are created and encrypted upon write so you need to recreate every secret.
+Multiple keys for encryption are are possible. When Decryotion, every key will be tried. when the secret is decoded, the result will be stored in a file saved as a string.  This file can be used as ENV Variable.
