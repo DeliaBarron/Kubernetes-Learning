@@ -26,6 +26,7 @@ If you need the data to outlive the pods like for logs to be collected when pod 
 ### Persistent Volumes
 PV is a storage abstraction
 PVC are defined by the pods. the pvc define a volume type using size and type of storage known as **StorageClass**  The cluster attatches the persistentVolume accordingly.
+ > *read down* storageClass is dynamic provisioned and automatic.
 
 Storage that has been provissioned. Could be:
 
@@ -99,8 +100,27 @@ $ `kubectl exec -ti exampleA -c alphacont -- ls -l alphadir`
 
 
 ### Persistent Storage Phases
-- Provision:
-- Binding:
-- Use
-- Release
-- Reclaim
+- Provision
+How the actual storage is created.
+  **static provision:** when the admin of the cluster goes ahead and creates PVs
+  **dynamic provision:** kubernetes automatically creates the resource using a `storageClass` when a PVC is made.
+
+- Binding: When a **control loop** on the cp notices the PVC. this PVC must contain a particular amount in size, qccess request and optionaly a storageClass. 
+**the watcher locates a matching PV or waits for the storageClass provisioner to create the PV** The PV must at least match the storage amount requested. 
+No other PVC can claim the same PV
+> If the provision was dynamic, the binding occurs right after the creation.
+
+- Use: The volume is in use when is mounted on the pod container(s) established path.
+The volume is unavailable to other pods unless it´s shared (`ReadWriteMany`)
+
+- Release: when the pod is done using it and the API sends request deleting the PVC. The resident data remains depending on the `persistentVolumeReclaimPolicy`.
+
+- Reclaim: has 3 phases:
+  1. Retain which keeps the data intact for the admin to handle the storage and data
+  2. Delete: tells the storage to delete the API object and the storage behind it
+  3. Recycle: removes the mountpoint and makes it available to a new claim
+
+  
+  Persistent volumes are not namespaces objects BUT PVC are!
+
+  
