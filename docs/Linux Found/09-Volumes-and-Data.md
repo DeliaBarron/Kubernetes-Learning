@@ -24,6 +24,9 @@ The workflow is :
 If you need the data to outlive the pods like for logs to be collected when pod dies, DB to live even if the pods crashes or to have Pods to share data between each other **You will need PERSISTENT STORAGE**
 
 ### Persistent Volumes
+PV is a storage abstraction
+PVC are defined by the pods. the pvc define a volume type using size and type of storage known as **StorageClass**  The cluster attatches the persistentVolume accordingly.
+
 Storage that has been provissioned. Could be:
 
 - nfs
@@ -68,26 +71,36 @@ The pod mounts the volume in the containers filesystem. **you can mount it on di
 
 For each request by a Node, a `StorageClass` must be declare, otherwise the access mode and the size are the only parameters and there is no configuration to pass this parameters to.
 
+
+**Shared Volume Example**
 ```
-# this is how a volumes specs looks in a pod
-apiVersion: v1
-kind: Pod
-metadata:
-    name:fordpinto
-    namespace: default
-spec: 
-    containers:
-    - image: simple-app 
-      name: gastank
-      command:
-      - sleep
-      - "3600"
-    volumeMounts:
-    - mountPath : /scratch
-      name: scratch-volume
-    volumes:
-    - name: scatch-volume
-     emptiDir: {}
+...
+containers
+- name: aphacont
+  image: box
+  volumeMounts:
+  - mountPath: /alphadir
+    name: sharevol
+- name: betacont
+  image:box
+  volumeMounts:
+  - mountPath: /betadir
+  name: sharevol
+volumes:
+- name: sharevol
+  emptyDir: {}
+   
+```
+Now if you check this commands:
+$ `kubectl exec -ti exampleA -c betacont -- touch /betadir/foobar`
+$ `kubectl exec -ti exampleA -c alphacont -- ls -l alphadir` 
+
+**the beta container is WRITING to this emptyDir and alpha ha accces to that and there is nothing to keep th containers from.**
 
 
-```
+### Persistent Storage Phases
+- Provision:
+- Binding:
+- Use
+- Release
+- Reclaim
