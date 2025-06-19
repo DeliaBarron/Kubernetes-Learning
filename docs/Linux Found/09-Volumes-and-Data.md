@@ -178,3 +178,48 @@ They can be manually encoded or via : `kubectl create secret`
 
 Secrets are created and encrypted upon write so you need to recreate every secret.
 Multiple keys for encryption are are possible. When Decryotion, every key will be tried. when the secret is decoded, the result will be stored in a file saved as a string.  This file can be used as ENV Variable.
+
+Secrets are stored in the `tmpfs` of the host node.
+
+**ALL VOLUMES REQUESTED BY A POD MUST BE MOUNTED BEFORE THE CONTAINERS WITHING THE POD GET STARTED, SO IN ORDER TO USE A SECRET AS A VARIABLE IN A POD, THE SECRET MUST ALREADY EXIST TOO**
+
+
+
+### Mounting Secrets as Volumes
+> You can access the values of each key-value pair of a secret as if they were files inside the pod.
+
+lets create a secret:
+`kubectl create secret generic my-secret \
+         --from-literal=username=admin \
+         --from-literal=password=s3cr3t`
+
+this secret would have 2 value keys: username and password.
+
+**When u mount a Secret into a pod as a Volume, each key of the secret file becomes one file of its own and the content of this files are the value that this key has in the secret file**
+
+```
+apiVersion: v1
+kind: Pod
+  metadata:
+    name: secret-test-pod
+  specs:
+    containers:
+    - name: app1
+      image: box
+      command: ["sleep", "3000"]
+      volumeMounts:
+      - name: secret-mount-vol
+        mountPath: /etc/secret-data
+      volumes:
+      - name: secret-mount-vol
+        secret:
+          secretName: my-secret
+```
+
+And now, inside the container:
+`ls -la /etc/secret-data`
+
+You will see: 
+- username
+- password
+ and if you cat them u can see the values as the output.
