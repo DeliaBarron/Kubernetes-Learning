@@ -223,3 +223,39 @@ You will see:
 - username
 - password
  and if you cat them u can see the values as the output.
+
+ `kubectl exec -ti box -- cat /etc/secret-data/password`
+
+ ## ConfigMap
+ Following the decoupling concept of kubernetes, `configMap` decouples a container image from configuration artifacts.
+
+ They store data as key-value pairs or any format.
+
+ Data on a configMap can come from this files or directly from a literal value.
+
+ **ConfigMaps can be consumed in various ways:**
+ - Pods can use them as ENV variables
+ - Pod commands can access the values on this files
+ - You can use them to populate volumes. as well as setting the acces modes in a volume
+ - Can be used by the nodes and the controller
+
+
+### Env Variables
+To  use them as, the pod manifest will use the `valueFrom` key and the `configMapKeyRef`
+
+```
+env: 
+- name: SPECIAL_LEVEL_KEY
+  valueFrom:
+    configMapKeyRef:
+      name: special-config      // This is how we named the configMap file on the cluster.
+      key: special.how          // This is a key inside the configMap
+```
+
+so this means that k8s  will look for a ConfigMap like this:
+
+- `kubectl get configmap special-config`
+
+
+
+
