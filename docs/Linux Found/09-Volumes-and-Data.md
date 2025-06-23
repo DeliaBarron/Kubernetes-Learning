@@ -227,6 +227,8 @@ You will see:
  `kubectl exec -ti box -- cat /etc/secret-data/password`
 
  ## ConfigMap
+> data on them cannot exceed 1MiB!
+
  Following the decoupling concept of kubernetes, `configMap` decouples a container image from configuration artifacts.
 
  They store data as key-value pairs or any format.
@@ -235,7 +237,7 @@ You will see:
 
  **ConfigMaps can be consumed in various ways:**
  - Pods can use them as ENV variables
- - Pod commands can access the values on this files
+ - Pod commands can access the values on this files. // pod and the configmap have to be in the same namespce
  - You can use them to populate volumes. as well as setting the acces modes in a volume
  - Can be used by the nodes and the controller
 
@@ -258,4 +260,56 @@ so this means that k8s  will look for a ConfigMap like this:
 
 
 
+
+
+## Lab1
+
+Theres 3 wasy to a config can put data: files, directory and from a literal value.
+if you have a file named `favourite` with the value `blue` >>
+ then u put this file as a key-value on a configMap : `k create configmap color --from-file=./favourite` 
+ `k get configmap color -o yaml`
+
+ then, this is how you can create a pod with ONE env variable inside coming from this configfile.
+
+```
+// Pod yaml
+
+apiVersion: v1
+kind : Pod
+metadata:
+  name: shell-demo
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    env:
+    - name: ilike         // name of the variable the will pod will use to call this value
+      valueFrom:
+        configMapKeyRef:
+          name: color
+          key: favourite  // key on the configfile
+```
+
+To see the $ilike variable. `k exec shell-demo -- /bin/bash -c 'echo $ilike'`
+
+### env vs envFrom
+`envFrom` 
+Instructs to crate a veriable from all the sources on the configMap `configMapRef` refers the `config` file name and selects all key-value pairs.
+
+`env`
+To select individual key in a configMap. `configMapKeyRef` and then the name of the `config` and the name of the `key` you want to use in the pod.
+
+To see all variables. `k exec shell-demo -- /bin/bash -c 'env'`
+
+
+### from a YAML
+- `kubectl create -f configMap-name.yaml`
+
+### as volume
+`volumeMounts` is at the level of `containers.image`  and `volumes` is at the level of `containers`
+
+## Lab 4. Using resource quota to limit PVC count and usage
+### Resource Quotas
+
+**Helps admin control how many resources like CPU, memory, storage and pods a particular namespace can use.**
 

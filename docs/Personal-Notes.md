@@ -1,4 +1,12 @@
 # k8s
+Contents
+
+- Cluster Architecture, Installation & Configuration	    25%
+- Workloads & Scheduling	                                15%
+- Services & Networking	                                    20%
+- Storage	                                                10%
+- Troubleshooting	                                        30%
+
 ## Basic Main Concepts
 ### Pods 
 Run one or multiple app containers.
