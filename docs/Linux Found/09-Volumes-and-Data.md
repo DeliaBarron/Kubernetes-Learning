@@ -308,6 +308,17 @@ To see all variables. `k exec shell-demo -- /bin/bash -c 'env'`
 ### as volume
 `volumeMounts` is at the level of `containers.image`  and `volumes` is at the level of `containers`
 
+## LAB2:
+- we crated a directory at local (making it the nfs-server)
+- export it
+- then using a worker node, we installed nfs-common there, and mounted this nfs- server directoy
+- Created a pv on the cluster (from local) using a yaml where we say what path, what type of pv and where it is
+
+
+### Lab 3.
+Creat a pvc to use this pv
+
+
 ## Lab 4. Using resource quota to limit PVC count and usage
 ### Resource Quotas
 
