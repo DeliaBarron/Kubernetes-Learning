@@ -317,10 +317,33 @@ To see all variables. `k exec shell-demo -- /bin/bash -c 'env'`
 
 ### Lab 3.
 Creat a pvc to use this pv
+To use a deployment and bound pods to a volume is easy too.
+
 
 
 ## Lab 4. Using resource quota to limit PVC count and usage
-### Resource Quotas
+
 
 **Helps admin control how many resources like CPU, memory, storage and pods a particular namespace can use.**
 
+### Notes:
+- If your manifest has an specific `namespace`value you cant overwrite it with the -n flag value on the command line.
+
+- ResourceQuota (k describe ns): only tracks PVC requests NOT actuall usage.
+- ResourceQuota applies at creation time not dynamically. So if your PVC requests more than what the quota allows, the creation is blocked.
+  But if the quota was raised **after a PVC** already existed, the PVC still coints toward usage - quota doesnt block it.
+- Only deleteing the PVC will reduce the requests.storage on the namespace
+
+
+4. The ReclaimPolicy of PV matters:
+
+- `Retain`: Volume is kept even after PVC is deleted (you must manually clean up).
+- `Delete`: If supported (not NFS), the PV is deleted with the PVC.
+- `Recycle`: Clears contents and makes PV available again (rare, legacy). 
+
+## Lab 5 
+`StorageClass` to Dynamically provision a volume. when a user creates a PVC and specifies a `StorageClasses` the system automatically creates a corresponding PV that meets the requirements.
+
+so in this lab we use StorageClass w an external NFS provisioner so that when the user creates pvc k8s provisions a backend by NFS subdirectory.
+
+### Install the NFS dynamic provisioner

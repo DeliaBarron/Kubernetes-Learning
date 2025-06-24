@@ -24,3 +24,9 @@ we go in airflow documentaion
 
 
 trino should use minio and posgress
+
+
+
+trino namespace
+- airflow trigers the jobs and uses trino to generate analitics and writes that to minio
+
