@@ -176,7 +176,7 @@ k8s talks to the storage backend, creates the PV dynamically, the PV gets bound 
 Secrets are another k8s API resource.
 They can be manually encoded or via : `kubectl create secret`
 
-Secrets are created and encrypted upon write so you need to recreate every secret.
+Secrets are created and encrypted upon write so you need to recreate every secret. But they dont contain encrypted data.
 Multiple keys for encryption are are possible. When Decryotion, every key will be tried. when the secret is decoded, the result will be stored in a file saved as a string.  This file can be used as ENV Variable.
 
 Secrets are stored in the `tmpfs` of the host node.
