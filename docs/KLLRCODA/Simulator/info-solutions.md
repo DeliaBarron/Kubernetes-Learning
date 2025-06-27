@@ -130,7 +130,24 @@ save the token and tell the pod to use this token for the k8s API to authorize o
 
 
 > Kubernetes adds environment variables into the pods such as the KUBERNETES_SERVICE_HOST and PORT.
-> This is the ClusterIP address of the Kubernetes API server, exposed via the internal kubernetes.
+> This is the ClusterIP address of the k8s service in the default namespace. when a pod requests https://${KUBERNETES_SERVICE_HOST} (or https://kubernetes.default) `kube-proxy` forwards it to the API server running on the control plane.
 
 
 
+# Task 10  RBAC ServiceAccount Role RoleBinding
+
+## RBAC
+- Role
+- ClusterRole
+- RoleBinding
+- ClusterRoleBinding
+
+**Because of this there are 4 different RBAC combinations and 3 valid ones:**
+
+Role + RoleBinding (available in single Namespace, applied in single Namespace)
+
+ClusterRole + ClusterRoleBinding (available cluster-wide, applied cluster-wide)
+
+ClusterRole + RoleBinding (available cluster-wide, applied in single Namespace)
+
+Role + ClusterRoleBinding (NOT POSSIBLE: available in single Namespace, applied cluster-wide)
