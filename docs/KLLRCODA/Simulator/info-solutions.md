@@ -137,10 +137,10 @@ save the token and tell the pod to use this token for the k8s API to authorize o
 # Task 10  RBAC ServiceAccount Role RoleBinding
 
 ## RBAC
-- Role
-- ClusterRole
-- RoleBinding
-- ClusterRoleBinding
+- `Role`: grant persmissions to a specific serviceA or user, bounded within a namespace
+- `ClusterRole`: permissions across the entire cluster. bounded w a user or services account too 
+- `RoleBinding`: **within a single namespace** 
+- `ClusterRoleBinding`: references a ClusterRole that defines the specific set of permissions that the user, group or service account is granted across the entire cluster.
 
 **Because of this there are 4 different RBAC combinations and 3 valid ones:**
 
@@ -148,6 +148,6 @@ Role + RoleBinding (available in single Namespace, applied in single Namespace)
 
 ClusterRole + ClusterRoleBinding (available cluster-wide, applied cluster-wide)
 
-ClusterRole + RoleBinding (available cluster-wide, applied in single Namespace)
+**ClusterRole + RoleBinding (available cluster-wide, applied in single Namespace)**
 
 Role + ClusterRoleBinding (NOT POSSIBLE: available in single Namespace, applied cluster-wide)

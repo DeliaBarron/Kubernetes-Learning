@@ -23,10 +23,20 @@ If you have a deployment, say NGINX, then you could create a service for it by e
 this would create something like this: 
 
 ```
+NAME        TYPE       CLUSTER-IP  EXTERNAL-IP  PORT(S)
 nginx       NodePort   10.0.0.112  <none>       80:31230/TCP   
+```
 
-Which means : port:nodePort/protocol --> 80:31230/Tcp
-80: Service port: the port inside the cluster that other Pods use to talk to the Service. 
-31230 this is the NodePort: a port exposed on every worker node, allowing acces to the service from outside the cluster.
+Which means : 
+port:nodePort/protocol --> 80:31230/Tcp
+- 80: Service port: the port inside the cluster that other Pods use to talk to the Service. 
+- 31230 this is the NodePort: a port exposed on every worker node, allowing acces to the service from outside the cluster.
 
 > The 80 in 80:31230/TCP is the port the Service forwards traffic to, and it should match the targetPort (which often matches the container's port) — in your case, probably nginx's port 80.
+
+## Service Types
+
+- **ClusterIP**: Service default. Only provides access internally. so it exposes the service within the k8s cluster.
+
+- **NodePort**: Exposes the service on every Node
+- **LoadBalancer**: 
