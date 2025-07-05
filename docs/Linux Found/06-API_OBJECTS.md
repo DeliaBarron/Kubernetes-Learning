@@ -9,7 +9,7 @@ Each API Object has generally 3 key sections:
 
 So basically API Objects are the resources in Kubernetes that can be created, updated and managed via the K8s API
 
-## v1 API Groups
+## v1 API Groups  
 this is a collection of groups for each main object category.
 
 ### 1. Node Object
@@ -64,12 +64,12 @@ When you create a *Deployment*, Kubernetes will automatically create the specifi
 Orchestrates individual pod lifecycle and updates. These are newer versions of Replication Controllers.
 Ensures the desire number of Pods are running.
 
-A ReplicaSet defines a **Pod template** that describes what each Pod should look like. This includes the container image, environment variables, volume mounts, etc and all pots using created by a ReplicaSet are identical based on thetemplate.
+A ReplicaSet defines a **Pod template** that describes what each Pod should look like. This includes the container image, environment variables, volume mounts, etc and all pods created by a ReplicaSet are identical based on the template.
 
 The **ReplicaSet** uses a Selector to identify which Pods it manages. This **selector**  includes labels.
 
-When would you use a `replicaSet` directly instead of a Deployment? As they dont handle updated like deployments do, you would use a `replicaSet`
-- **if you dont need to update software**
+When would you use a `replicaSet` directly instead of a Deployment? As they dont handle updates like deployments do, you would use a `replicaSet`
+- **if you DONT need to update software**
 - **If you need custom update behaviour that wont work with deployments as the manage pods in bigger scale**
 
 ### Pod
@@ -97,7 +97,7 @@ DaemonSets Pods are gonna get deployed by K8s even when theres toleration proble
 
 **To communicate to the DaemonSets Pods**
 
-- By using a `ClusterIP` service which allows to select pods through **label selector** and use the service to reach a daeomn on a random node. (No way to reach specific node)
+- By using a `ClusterIP` service which allows to select pods through **label selector** and use the service to reach a daemon on a random node. (No way to reach specific node)
 
 - DNS: Create a `headless service` and using the endpoints resource or retrieve multiple A records from DNS.
 
