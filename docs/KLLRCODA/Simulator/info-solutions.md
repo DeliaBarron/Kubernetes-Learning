@@ -98,7 +98,7 @@ kubectl is a client sending request to the API.
 
 So, by default, all pod gets assigned the default `service account` or the one specified at creation. Service Account should be at the same namespace 
 
-| Resource 1          | Resource 2 | Why?                                                  |
+| Resource 1          | Resource 2                |                     Why?                                             |
 |---------------------|---------------------------|----------------------------------------------------------------------|
 | Pod                 | ServiceAccount            | Pods can only mount/use ServiceAccounts from their own namespace     |
 | Pod                 | ConfigMap/Secret          | Pods reference them by name, and names are namespace-scoped          |
@@ -112,7 +112,7 @@ So, by default, all pod gets assigned the default `service account` or the one s
 
 - get the service account: `kubectl get serviceaccounts -n <namespace>`
 
-- under `spec` add the `serviceAccountName`  **## be careful about the args key and the run and namespace value**
+- under `spec` add the `serviceAccountName`  **## be careful about the args key and the run and namespace value.**
 
 - get inside the pod: `k exec -n ns-name pod-name -it -- sh`
 
@@ -160,5 +160,84 @@ Role + ClusterRoleBinding (NOT POSSIBLE: available in single Namespace, applied 
 
 4. test the RBAC with: `kubectl auth can-i <verb> <resources> --as <system:serviceaccount:<namespace>:<serviceaccount-name>` 
 
+ServiceAccoun
+> read more about these past commands. What else can i do with can-i or role or rolebindig flags for  example!!!
 
-> read more about these past commands. What else can i do with can-i or role or rolebindig flags for  example.
+> when u create a Pod. You should always give it a name.
+
+
+# Task 11 DaemonSet on all Nodes
+
+DaemonSet ensures every nodes (all or established nodes) run a copy of a Pod.
+
+**Deployment** = run N copies of a Pod, anywhere.
+
+**DaemonSet** = run 1 copy of a Pod on each node.
+
+Uses of a daemon: 
+- running a cluster storage daemon on every node
+- running a logs collection daemon on every node
+- running a node monitoring daemon on every node
+
+
+|Deployment|DaemonSet|
+|---|---|
+|stragety : how updates to the Deployment’s pods are rolled out ||
+|replicas||
+
+```
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  creationTimestamp: null
+  labels:
+    id: ds-important
+    uuid: 18426a0b-5f59-4e10-923f-c0e078e82462
+  name: ds-important
+  namespace: delians
+spec:
+  selector:            # How the ds selects pods it manages. MUST MATCH LABELS ON POD TEMPLATES EXACTLY
+    matchLabels:
+      id: ds-important
+      uuid: 18426a0b-5f59-4e10-923f-c0e078e82462 
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:          # Labels assigned to the pods created by the Daemonset. MUST MATCH the MATCHLABELS ABOVE
+        id: ds-important
+        uuid: 18426a0b-5f59-4e10-923f-c0e078e82462
+    spec:              # Pod spec that defines containers, RESOURCES and tolerations....
+      containers:
+      - image: httpd:2-alpine
+        name: httpd
+        resources:
+          requests:
+            cpu: 10m
+            memory: 10Mi
+      tolerations:
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/control-plane
+```
+
+once the DaemonSet is applied. You can see where each of the pods are running where: 
+
+- `k get pod -l id=ds-important -o wide`
+
+
+# Task 12 Deployment on all nodes
+- create a deployment 
+`k -n <namespace> deployment <name> --image=<> --dry-run=client -oyaml > deploy.yaml`
+
+## Pod affinity
+https://medium.com/@prasad.midde3/understanding-node-affinity-pod-affinity-node-selector-and-pod-anti-affinity-in-kubernetes-7899e218ac6d
+
+feature that allows you to influence where the pods are scheduled baes onthe labels of other existing pods
+
+
+### PodAntiAffinity
+When we need to run a Pod on a node where another Pod of a specific label is not already running.
+
+Prevents pods to be schedule on teh same node as the others based on certain label selectors
+
+
+# Task 13 Gateway Api Ingress
