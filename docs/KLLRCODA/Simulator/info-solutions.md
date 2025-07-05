@@ -96,7 +96,7 @@ the `k8sAPI` is an API server that controls the cluster
 kubectl is a client sending request to the API.
 -------------
 
-So, by default, all pod gets assigned the default `service account`or the one specified at creation. Service Acc should be at the same namespace 
+So, by default, all pod gets assigned the default `service account` or the one specified at creation. Service Account should be at the same namespace 
 
 | Resource 1          | Resource 2 | Why?                                                  |
 |---------------------|---------------------------|----------------------------------------------------------------------|
@@ -151,3 +151,14 @@ ClusterRole + ClusterRoleBinding (available cluster-wide, applied cluster-wide)
 **ClusterRole + RoleBinding (available cluster-wide, applied in single Namespace)**
 
 Role + ClusterRoleBinding (NOT POSSIBLE: available in single Namespace, applied cluster-wide)
+
+1. Create a Service Account `k -n namespace create sa sa-name`
+
+2. Grant permissions to a role: `k -n name create role role-name --verb=create --resource=secret --resource=configmap`
+
+3. Bind Role to the Service Acc: `k -n name create rolebinding processor --role=role-name --serviceaccount=namespace:sa-name`
+
+4. test the RBAC with: `kubectl auth can-i <verb> <resources> --as <system:serviceaccount:<namespace>:<serviceaccount-name>` 
+
+
+> read more about these past commands. What else can i do with can-i or role or rolebindig flags for  example.
