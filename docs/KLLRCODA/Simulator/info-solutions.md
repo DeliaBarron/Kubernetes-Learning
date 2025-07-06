@@ -241,3 +241,54 @@ Prevents pods to be schedule on teh same node as the others based on certain lab
 
 
 # Task 13 Gateway Api Ingress
+When to use GAteway API?: when your application require header-based routing or more precise control over traffic.
+
+GatewayClass references a Gateway. Also contains the name of the controller that implements the class
+
+The Gateway contains the instance of traffic handling. **Defines a network endpoint**
+
+HTTPRoute represents the configuration that is applied to the underlying Gateway implementation. **It specifies the routing behavior fo the HTTP requests from a Gateway listener to a backend network endpoint**
+
+## HTTPROUTE
+- `parentsRefs`: this declares under what gateway we will operate this routing. This Gateway must exist.
+
+- `hostnames`: restricts the rout to apply ONLY if it was made to this hosts.
+
+- `rules`: contains:
+    - `matches`: what kind of rout it matches ( /mobile, /desktop).
+    - `backendRefs`: where to send this matches. 
+
+
+# Task 14 Certificates
+
+with OpenSSL
+`openssl x509 -noout -text -in apiserver.crt``
+
+compare the same date with kubeadm:
+`kubeadm certs check-expiration  | grep apiserver``
+
+`kubedam certs renew apiserver`
+
+# Task 15 | Network Policies
+
+# Taks 16 |  Update CoreDNS Configuration
+CoreDNS uses a configMap as a default 
+do a backup for safety
+
+if you change a secret or configmap on a deployment you can do rollout restart do the pods get this info: 
+`k rollout restart deploy coredns`
+
+# Task 17 
+create a pod k run -n delians pod-name --image=image --labels="pod=name,container=name"
+
+get where the pod is running
+`k get pod pod-name -o wide`
+
+connect to that node
+get info of the containers 
+
+`crictl ps`
+
+`crictl inspect container-ID | grep runntime`
+
+`crictl logs container-ID`

@@ -1,7 +1,7 @@
 # Kubernetes Architecture
 The k8s cluster is driven by API calls to **operators**.
 
-When building a cluster using `kubeadm` the `kubelet` process is managed by systemd.Once running it starts all the pods found under `/etc/kubernetes/manifests`.
+When building a cluster using `kubeadm` the `kubelet` process is managed by systemd.Once running it starts all the pods found under `/etc/kubernetes/manifests` at the control plance.
 
 ## Components of Control Plane
 

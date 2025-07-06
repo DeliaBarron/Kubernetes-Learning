@@ -36,10 +36,3 @@ if you get this error:
 check under  `/etc/kubernetes/manifests/kube-apiserver.yaml` that the --etcd-servers have the correct port.
 You can check the  `/etc/kubernetes/manifests/etcd.yaml` to check the port where etcd is running
 
-# API server
-checked the /etc/kubernetes/manifests/api for the logs of the api 
-
-keep in mind the ports:
- API server's port 6443
- etcd's ports 2379-2380
- Kubelet's port 10250
