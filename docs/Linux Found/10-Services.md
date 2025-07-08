@@ -70,7 +70,7 @@ An ingress controller is a microservice running in a pod listening to a high por
 
 `kube-proxy` --> run on every pods, manage tables, it routes traffic to the healthy pods on the node. handles lots of the routing behind Services. *basically writing IP tables rules*
 
-`Ingress`: router for http/s trafic. Works w a controller like **Traefik**.
+`Ingress`: router for http/s trafic. Works with a controller like **Traefik**.
 
 
 
@@ -84,3 +84,27 @@ ClusterIP Service → kube-proxy (load balancing)
 Pod IP (routed via CNI networking)
 
 ```
+
+# LAB 1 
+Services declare a policy to access a logical set of Pods. tipixally assigned with labels.
+
+When creating pods form a deployment you can have multiple labels
+- the first is to define the label od the deployment itself
+- the first matchLabel is the one the deployment should match by managing the pods. when the pods are running the deployment will manage those with this label
+- the label of `nodeSelector` is the label to use when choosing where to schedule this pods. This label should be one in the node´s label.
+
+create labels :
+- `k label node <node-name> <label>`
+delete a label
+- `k label node <node-name> label-` //adding the - deletes the label
+
+once the deploymeny is running we can create a service to expose the pods.
+As we can see, the deployment declares the containers inside the pod will listen on 8080 BUT THAT DOESN EXPOSE THEM TO THE OUTSIDE, so we nned to create a service or ingress
+
+
+- `k expose deployment deploy-name`
+- verify: 
+`k get ep deploy-name`
+
+
+# LAB 2
