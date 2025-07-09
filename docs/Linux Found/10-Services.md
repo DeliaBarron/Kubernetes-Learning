@@ -39,7 +39,7 @@ port:nodePort/protocol --> 80:31230/Tcp
 
 ## Service Types
 
-- **ClusterIP**: Service default. Only provides access internally. so it exposes the service within the k8s cluster.
+- **ClusterIP**: Service default. Only provides ACCESS INTERNALLY. so it exposes the service within the k8s cluster.
 
 Kubernetes assigns this Service an IP (The *cluster IP*). The controller for that Service continuosly scans for Pods that match its label selector.
 Services are assumed to have virtual IPs only routable within the cluster network.
@@ -106,5 +106,15 @@ As we can see, the deployment declares the containers inside the pod will listen
 - verify: 
 `k get ep deploy-name`
 
+this is per default a ClusterIP.
+You can test a cluster P service by getting into the pod and doing a curl to the clusterip plus listening port
+
+
+
 
 # LAB 2
+when you work with NodePort after exposing the depoyment:
+`k expose deployment <name> --type=NodePort --name=<service-name>`
+
+you can see the service has all pods as endpoints.
+the kube-proxy of each node intercepts the traffic on the pod and forwards the traffic to the pods on their targetPort.
