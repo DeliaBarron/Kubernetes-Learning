@@ -5,7 +5,7 @@ Is similar to a package manager like `apt`. The chart similar to a package, has 
 With Helm you can package all manifests as a tarball (deployments, services, configMaps), put them on a repo and with a single command, deploy and start the entire application.
 
 ### Helm Charts
-Are reusable templates thact can be shared through repositories. 
+Are reusable templates that can be shared through repositories. 
 Charts can customized using `values.yaml` files. 
 Convenient way to package and distribute repositories.
 Helm charts are bundles of YAML Files that can be pushed to a helm repo or download this bundles from helm repositories.

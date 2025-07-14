@@ -4,7 +4,7 @@
 K8s kubectl checks for the file $HOME/.kube/config
 If we are using another path we can specify it with `--kubeconfig` then the path and then all the subcommands we normally would use
 
-k --kubeconfig /file/path config get-context -o name
+`k --kubeconfig /file/path config get-context -o name`
 
 How to decode the certificate Base64
 `echo LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1...........RS0tLS0tCg== | base64 -d > base.file`
@@ -13,10 +13,21 @@ Question 2 | MinIO Operator, CRD Config, Helm Install
 # Task 2
 Operators
 
+- helm repo update
+- helm search repo <keyword> // search at the ADDED  repos
+
+add a new repo: 
+- helm repo add repo-name repo-url
+- helm repo update
+- helm search repo name
+- helm -n <namespace> install <release-name> <repo-name>
+- helm -n <namespace> list
+- k get tenant
 
 
-# Task 3
-- to see ehat controller is managing this pod you can get all controllers and grep the name base of the pod
+# Task 3 | Scale down StatefulSet
+
+- to see what controller is managing this pod you can get all controllers and grep the name base of the pod
 `k -n namespace get deploy,ds,sts | grep pod-name`
 
 then u get the controller name and scale it down:
@@ -292,3 +303,5 @@ get info of the containers
 `crictl inspect container-ID | grep runntime`
 
 `crictl logs container-ID`
+
+

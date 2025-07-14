@@ -118,3 +118,6 @@ when you work with NodePort after exposing the depoyment:
 
 you can see the service has all pods as endpoints.
 the kube-proxy of each node intercepts the traffic on the pod and forwards the traffic to the pods on their targetPort.
+
+
+NOTES: when we expose the pod port and then we expose this pod as a service, the serfice detects the listening port on the pod and puts it as TargetPort.

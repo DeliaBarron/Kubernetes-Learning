@@ -109,7 +109,7 @@ spec:
   - name: nginx-pod
     image: nginx:1.22.1
     ports:
-    - containerPort: 80
+    - containerPort: 80   // TCP ports are the default
 
 ```
 
