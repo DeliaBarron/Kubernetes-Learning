@@ -17,7 +17,7 @@
   - [ ] Ensure templates can install without including CRDs
 - [ ] Enable communication between pods using Network Policies
 - [ ] Install Calico for networking
-  - [ ] Configure CRDs for Calico if required
+- [ ] Configure CRDs for Calico if required
 - [ ] Migrate from standard Service to Gateway API
 - [ ] Set up an ETCD Cluster
 - [ ] Configure HorizontalPodAutoscaler
