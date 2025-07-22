@@ -42,9 +42,23 @@ In the CLI:
 - Frederix-monitoring an these alerts require a customer ticket or slack channel 
 
 ## To Do's
-- improve alert to get the node name
-- For Daisy do a table of what we manage on the cluster cluster
+- Improve alert to get the node name
+- For Daisy do a table of what we manage on the cluster 
 - Work on K8s documentation
 
 
 
+# Troubleshooting /tickets
+Traefik pods: they are just forwarding and managing the egress so if the pods are having some requests 404 is weird as nothing should try to write to Traefik pods as traefik just forwards.
+
+Prometheus is scraping the data. release promethteus label makes prometheus to search for data in this places, this is done through the metrix service with the port named metrics too.
+THis service (traefik-service)targetshas as endpoint the traefik pods and each traedik pod has its own different port
+
+2 traefik Pods and multiple ports open as in normal life
+
+
+Traefik: manages the public network to the internal cluster network
+
+enableRemoteWriter
+
+missing conf we changed and is f

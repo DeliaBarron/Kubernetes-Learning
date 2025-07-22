@@ -60,6 +60,8 @@ Velero has crd that get all the reources and backups
 
 so with velero CLI you can do 
 - velero describe <backup>
+- velero get <backup>
+- k get backups
 
 
 # restic

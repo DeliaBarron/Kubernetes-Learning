@@ -1,0 +1,27 @@
+# Opensearch 
+h
+- helm ls
+- ls on the repo of staging.hs/packag/velero
+helm search repo -l opensearch/opensearch
+helm show values opensearch/opensearch --version <new version of chart> > values.yaml
+vdiff values old-values
+helm upgrade opensearch opensearch/opensearch -f values --version 
+
+WE need to upgrade the dashboards components too for Opensearch
+
+
+
+
+
+make old values and 
+
+velero values especifics: 
+provider has to be was
+the bucket location
+config for the bucket
+
+
+## prometzheus
+servicecs and the service  monitors have the `release` prometheus labels
+
+# CEP
