@@ -447,3 +447,12 @@ You need to say where is this snapshot being unpacked (data-dir)
 --cacert=/etc/kubernetes/pki/etcd/ca.crt
 --data-dir=/var/lib/etcd-backup
 ```
+then tell etcd thtat we are using this state:
+- go to `cd /etc/kubernetes/manifests/etcd.yaml`
+- find the volume where etcd gets its data
+```
+volumes:
+- hostPath:
+  name: etcd-data
+    path:/var/lib/etcd-backup
+    

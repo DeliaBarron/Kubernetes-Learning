@@ -23,6 +23,7 @@ add a new repo:
 - helm -n <namespace> install <release-name> <repo-name>
 - helm -n <namespace> list
 - k get tenant
+- edit the tenant they ask and then create it (from the file you edited k apply -f file)
 
 
 # Task 3 | Scale down StatefulSet
@@ -39,9 +40,13 @@ Use label selectors too — for example:
 If a Pod has a label like app=nginx, and so does a Deployment or StatefulSet, it’s a good sign they’re related.
 
 # Task 4
-
+To get the resources used by the pods. 
+- `k top pods name`
 
 # Taks 5 
+
+
+
 
 # Task 6  
 
