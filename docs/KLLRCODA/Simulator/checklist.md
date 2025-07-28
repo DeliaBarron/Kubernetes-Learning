@@ -28,3 +28,9 @@
   - [ ] Set required network environment variables in the config file
 - [ ] Add a sidecar container for logs
   - [ ] Set the log path to `/path/logs`
+
+
+----------------------
+to do-labs in  chatgpt 
+ different ways i could get assked to apply netpolicies to pods or deployments or enabling pods communication w netpols is it posible w daemonsets? stsfsets?? replicasets? idk
+

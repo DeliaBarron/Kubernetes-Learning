@@ -43,7 +43,7 @@ If a Pod has a label like app=nginx, and so does a Deployment or StatefulSet, it
 
 # Taks 5 
 
-# Task 6
+# Task 6  
 
 # Taks 7
 `k top`: the top commands allows you to see the resources of the pods and nodes. This requires the Metrics Server to be installed.

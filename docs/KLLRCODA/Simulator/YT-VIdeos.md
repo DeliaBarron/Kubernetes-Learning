@@ -155,7 +155,7 @@ spec:
 ```
 
 `kubectl apply -f pod.yaml`
-ensure: k get pod noded -o wide
+ensure:`k get pod noded -o wide`
 
 ## 8 Understand the primitives used to create robust, self-healing, app deployments.
 1. Create a Pod named multicontainer that has two containers:
@@ -215,7 +215,7 @@ spec:
 - `k create serviceaccount app-dev`
 - `k create clusterrolebinding name --clusterrole=name --serviceaccount=namespace:name`
 
-## 11 TRoubleshoot clusters and nodes
+## 11 Troubleshoot clusters and nodes
 1. Inspect the nodes controller and node-1 for any taints they have. Write the results to their respective files:
 2. controller /opt/control.taint
 3 node 1.  /opt/node.taint
@@ -256,11 +256,11 @@ spec:
         port:
         - containerPort: 80
       volumeMounts:
-        - name: configMap
+        - name: config-map
           mountPath: "/www/data"
           readOnly: true
   volumes:
-  - name: cofigMap
+  - name: cofig-map
     configMap:
       name: metal-cm
 ```
@@ -336,6 +336,114 @@ spec:
 
 ## 14 Define and enforce Network Policies
 1. in namespace cherry you'll find two deployments named pit and stem. Both deployments are exposed via a service.
-2. Make a NetworkPolicy named cherry-control that: 
-3. that prevents outgoing traffic from deployment pit...
+2. Make a NetworkPolicy named cherry-control that prevents outgoing traffic from deployment pit...
 ... EXCEPT to that of deployment stem
+
+
+Check for the labels of pit and stem as we nee to especify on the netweok policy who are we targetting.
+
+`k get pods -n cheryy --show-labels`
+once we see its app=pit
+we go to the networkpolicy and we say the podSelector.matchLabels is app: pit.
+
+then we select the -egress > to > podSelector> matchLabels > app
+
+### 15 Use Helm to install cluster components
+Modify the Helm chart configuration located at // to ensure the deployment creates 3 replicas of a pod.
+then install the chart into the cluster
+the resources will be created in the delians namespace.
+
+When running `helm create mychart` helm scaffolds a directory structure that serves as a template.
+Under Templates/ you will normally find a deployment.yaml that gets its values from the `/mychart/values.yaml` file.
+
+- Modify the values.yaml file to create 3 Replicas.
+- `helm install name mychart/ --namespace=name` to build everything on the chart.
+
+
+### 16 Understand application deployments and how to perform rolling update and rollbacks.
+1. There is an existing deployment named `bla` in namespace `king-of-lions`
+2. Check the deployment history and rollback to a version that actually works
+
+- `kubectl rollout history deployment <deploy-name>`: Shows what prior revisions (if any) exist for your deployment.
+
+- `kubectl rollout undo deployment <deploy-name>`: Rolls back your deployment to its last revision.
+
+## 17 Create and manage Kubernetes clusters using kubeadm
+1. Join node-2 to your existing kubeadm cluster. It has already been pre-provisioned with all necessary installations.
+
+Go to the node u need to join.
+- `kubeadm token create --print-join-command
+
+## 18 Manage the lifecycle of Kubernetes clusters
+1. use kubeadm to upgrade the controller node from version v1.31.4 to v1.32.1
+2. You will also upgrade kubelet and kubectl to match this version 
+
+Upgrade Controlplane
+- `sudo apt-mark unhold kubeadm`: unfreeze the tool kubeadm to be able to upgrade it now
+- `sudo apt update`
+- `sudo apt install -y kubeadm=1.32.1-1.1` 
+-  once u updated put back the hold on kubeadm: `apt-mark hold kubeadm`
+-`kubeadm version`
+
+Then we drain the Controlplanes:
+- `sudo kubeadm upgrade plan`: this checks that your cluster can be upgraded this will give u the following command u have to run for the first controlplane 
+- `sudo kubeadm upgrade apply v1.32.1`
+- After kubeadm upgrade apply, you must update the local kubelet and kubectl to match
+- `sudo apt install -y kubelet=1.31.x-00 kubectl=1.31.x-00`
+- `sudo apt-mark hold kubelet kubectl`
+
+// For the controlplane 2 and 3:
+1. Install kubeadm
+sudo apt update
+sudo apt install -y kubeadm=1.31.x-00
+sudo apt-mark hold kubeadm
+
+ 2. Run node-level upgrade (not apply)
+sudo kubeadm upgrade node
+
+ 3. Upgrade kubelet and kubectl
+sudo apt install -y kubelet=1.31.x-00 kubectl=1.31.x-00
+sudo apt-mark hold kubelet kubectl
+
+4. Restart kubelet
+sudo systemctl daemon-reexec
+sudo systemctl restart kubelet
+
+// Upgrade the worker nodes
+// Do one at a time
+kubectl cordon <worker-node-name>
+kubectl drain <worker-node-name> --ignore-daemonsets
+
+ 2. Install kubeadm
+sudo apt update
+sudo apt install -y kubeadm=1.31.x-00
+sudo apt-mark hold kubeadm
+
+
+
+- `kubectl drain controlplan-name --ignore-daemonsets --force`
+- still on the controller: `kubectl uncordon controller`
+- 
+
+
+## 19 Manage the lifecycle of Kubernetes clusters
+Take a snapshot of the etcd cluster and save it as 7opt/clusterstate.backup
+2. Restore the clluster state from /opt/clusterstate.backup
+
+- specify api of etcd for k8s: `export ETCDCTL_API=3`
+
+```
+ ETCDCTL_API=3 etcdctl snapshot save clusterstate.back \
+--cert=/etc/kubernetes/pki/etcd/server.crt \
+--key=/etc/kubernetes/pki/etcd/server.key \
+--cacert=/etc/kubernetes/pki/etcd/ca.crt
+```
+restore: 
+You need to say where is this snapshot being unpacked (data-dir)
+```
+ ETCDCTL_API=3 etcdctl snapshot restore /opt/clusterstate.back \
+--cert=/etc/kubernetes/pki/etcd/server.crt \
+--key=/etc/kubernetes/pki/etcd/server.key \
+--cacert=/etc/kubernetes/pki/etcd/ca.crt
+--data-dir=/var/lib/etcd-backup
+```

@@ -12,8 +12,33 @@ trino and mongodb are expected
 WE see tha topenEBD is usning alot of memory in one node only so we can:
 - REstart/delete Pod
 
+### Disk Usage in Node
 
-## High loadin node worker
+ - Disk usage in node 10.182.101.54:9100 in disk /dev/sdb is higher than 75%
+
+- Connect to the node
+- /var is in k8s out main partition 
+-  check where is the main load anyways: `df -h`
+- `cd /var`
+- `du -sch *`
+- see where u have the most usage then `cd ` to that directory again and run `du -sch *` again 
+
+#### Pro54
+In Master.pro54 they tend to have a lot of images. 
+This images are located under `/var/lib/containerd` so if this is the directory that is being filled up, crete a ticket asking the customer how to proceed.
+> Ticket Example: Ticket#202507245300199
+
+If the answer is to clean the images that are not used the following commands are needed. 
+
+- on the node run `crictl images`
+- here you can see the size of the images and how many there are. (**also usefull for Ticket information for the customer**).
+- in order to get rid of unused images run `crictl rmi --prune`
+- you can get more information with : 
+    - `crictl --help`
+    - `crictl rm --help`
+
+
+### High loadin node worker
 
 go to grafana >> see what pod is using more CPU
 Create a ticket saying all the pods that are usin more cpu and ask what we do
@@ -22,7 +47,7 @@ Create a ticket saying all the pods that are usin more cpu and ask what we do
 This procedure is for when we have a constante cpu usage
 
 
-##  PGPool
+###  PGPool
 to many connections in Geo
 
 
@@ -36,21 +61,24 @@ WE can filter time, customer cluster and pod name /namespace / deployment
 
 
 
-## OOMkileed pod requires a customer ticker to see why it was killed
+### OOMkileed pod requires a customer ticker to see why it was killed
 
-
-Other alert we get and we cant do much of it: add the defragmented command of driton:
 ## troubleshooting
 ### etcd
-- compare etcd data hash
+Other alert we get and we cant do much of it: add the defragmented command of driton
+
+- compare etcd data hash at the beginning
 ```
-kubectl -n kube-system exec etcd-controlplane1.cloudwifi-csn-prod.srservers.net  -it -- etcdctl --write-out=table --cluster  --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/peer.crt --key=/etc/kubernetes/pki/etcd/peer.key endpoint hashkv
+kubectl -n kube-system exec  etcd-controlplane1.staging.hs.srservers.net -it -- etcdctl --write-out=table --cluster  --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/peer.crt --key=/etc/kubernetes/pki/etcd/peer.key endpoint hashkv
 ```
-- run etcd defragmentation for all members of the cluster
+
+- Then run etcd defragmentation. this will run for all members of the cluster.
 
 ```
-kubectl -n kube-system exec etcd-controlplane1.cloudwifi-csn-prod.srservers.net -it -- etcdctl --write-out=table --cluster  --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/peer.crt --key=/etc/kubernetes/pki/etcd/peer.key defrag --cluster
+kubectl -n kube-system exec etcd-controlplane1.staging.hs.srservers.net -it -- etcdctl --write-out=table --cluster  --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/peer.crt --key=/etc/kubernetes/pki/etcd/peer.key defrag --cluster
 ```
+then u will see the hash value changes.
+
 
 
 # velero 
