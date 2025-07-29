@@ -44,11 +44,18 @@ To get the resources used by the pods.
 - `k top pods name`
 
 # Taks 5 
+This is how a HPA conf looks like
+autoscaling is the API it uses and we are using the latest v2
 
-
+if i have kustomize, i would modify the base 
+To apply kustomize:
+- `k kustomize staging or prod  | k apply -f` 
 
 
 # Task 6  
+Practioe!!!ass
+
+
 
 # Taks 7
 `k top`: the top commands allows you to see the resources of the pods and nodes. This requires the Metrics Server to be installed.
