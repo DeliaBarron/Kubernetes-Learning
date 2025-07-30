@@ -1,26 +1,26 @@
 # k8s cluster upgrades
 # /etc/apt/sources.list.d/kubernetes
-`vim /etc/apt/sources.list.d/kubernetes`
+`vim /etc/apt/sources.list.d/kubernetes.list`
 
 deb https://pkgs.k8s.io/core:/stable:/v1.30/deb/  /
-deb [signed-by=/usr/share/keyrings/k8s-core-archive-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.32/deb/ /
+deb [signed-by=/usr/share/keyrings/k8s-core-archive-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.33/deb/ /
 
 # /etc/apt/sources.list.d/debian_backports
-`vim /etc/apt/sources.list.d/debian_backports`
+`vim /etc/apt/sources.list.d/debian_backports.list`
 
 deb http://deb.debian.org/debian bullseye-backports main contrib non-free
 
 - sudo apt-key del 234654DA9A296436
-- `curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key | sudo gpg --dearmor -o /usr/share/keyrings/k8s-core-archive-keyring.gpg`
+- `curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.33/deb/Release.key | sudo gpg --dearmor -o /usr/share/keyrings/k8s-core-archive-keyring.gpg`
  
 - `sudo apt update`
 - `sudo apt-cache madison kubeadm`
 
 
 Go to the first controlplane 
-- `sudo apt-mark un hold kubeadm`
+- `sudo apt-mark unhold kubeadm`
 - `sudo apt-get update `
-- `sudo apt install kubeadm=1.32.7-1.1  `
+- `sudo apt install kubeadm=1.33.3-1.1  `
 - `sudo apt-mark hold kubeadm`
 
 Verify the version : `kubeadm version `
@@ -39,7 +39,7 @@ WE are still on the first controlplane
 ```
 sudo apt-mark unhold kubelet kubectl && \
 sudo apt-get update
-sudo apt-get install kubelet=1.32.7-1.1  kubectl=1.32.7-1.1  & \
+sudo apt-get install kubelet=1.33.3-1.1  kubectl=1.33.3-1.1  & \
 sudo apt-mark hold kubelet kubectl
 ```
 
@@ -59,7 +59,7 @@ Bring the node back online:
 cp2:
 - `sudo apt-mark unhold kubeadm`
 - `sudo apt-get update `
-- `sudo apt install kubeadm=1.32.7-1.1 `
+- `sudo apt install kubeadm=1.33.3-1.1 `
 - `sudo apt-mark hold kubeadm`
 - `sudo kubeadm upgrade node`
 
@@ -74,7 +74,7 @@ cp2:
 ```
 sudo apt-mark unhold kubelet kubectl && \
 sudo apt-get update
-sudo apt-get install kubelet=1.32.7-1.1  kubectl=1.32.7-1.1  & \
+sudo apt-get install kubelet=1.33.3-1.1  kubectl=1.33.3-1.1  & \
 sudo apt-mark hold kubelet kubectl
 ```
 
@@ -88,28 +88,30 @@ kubectl version
 
 ### Uncordon the node
 Bring the node back online:
-- `kubectl uncordon worker2.staging.hs.srservers.net`
+- `kubectl uncordon controlplane3.staging.hs.srservers.net`
 
-## Upgrade worker nodes
+## Upgrade Worker nodes
 
 - `sudo apt-mark unhold kubeadm`
 - `sudo apt-get update `
-- `sudo apt install kubeadm=1.32.7-1.1 `
+- `sudo apt install kubeadm=1.33.3-1.1 `
 - `sudo apt-mark hold kubeadm`
 - `sudo kubeadm upgrade node`
 
 !!!!!
 
-kubectl exec vault-0 -- vault operator unseal sKNVhNryRXQQuNkvX9yT81dd43DZ7P9Vt434xgT7V3c=
+Every time you upgrade a node 
+kubectl exec vault-1 -- vault operator unseal sKNVhNryRXQQuNkvX9yT81dd43DZ7P9Vt434xgT7V3c=
 
-- `kubectl drain worker2.staging.hs.srservers.net   --ignore-daemonsets --delete-emptydir-data`
+- `kubectl drain worker3.staging.hs.srservers.net   --ignore-daemonsets --delete-emptydir-data`
 
 
 ### Upgrade kubelet and kubectl 
+
 ```
 sudo apt-mark unhold kubelet kubectl && \
 sudo apt-get update
-sudo apt-get install kubelet=1.32.7-1.1  kubectl=1.32.7-1.1  & \
+sudo apt-get install kubelet=1.33.3-1.1  kubectl=1.33.3-1.1  & \
 sudo apt-mark hold kubelet kubectl
 ```
 
@@ -123,7 +125,9 @@ kubectl version
 
 ## kubectl uncordon worker
 
-- `kubectl uncordon worker1.staging.hs.srservers.net`
+- `kubectl uncordon worker3.staging.hs.srservers.net`
+
+IN CONTROLPLANE1 
 
 
 ## Troubleshooting 
@@ -134,3 +138,7 @@ If u cant runn kubectl locally u can enter other node and run it ther by exporti
 - `export KUBECONFIG=/etc/kubernetes/admin.conf`
 - cordon /uncordon commands
 
+
+
+
+----------

@@ -18,10 +18,10 @@
 - [ ] Enable communication between pods using Network Policies
 - [ ] Install Calico for networking
 - [ ] Configure CRDs for Calico if required
-- [ ] Migrate from standard Service to Gateway API
+- [ ] Migrate fm standard Service to Gateway API
 - [ ] Set up an ETCD Cluster
 - [ ] Configure HorizontalPodAutoscaler
-- [ ] Troubleshoot misconfigured or static pods
+- [ ] Tubleshoot misconfigured or static pods
 - [ ] Distribute resources evenly over nodes (e.g., 3 nodes)
   - [ ] Use StatefulSets with `resources.requests` set (limits optional)
 - [ ] Install `cri-dockerd` with `dpkg -i`

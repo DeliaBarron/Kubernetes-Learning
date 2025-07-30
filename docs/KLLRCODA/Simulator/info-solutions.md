@@ -53,7 +53,7 @@ To apply kustomize:
 
 
 # Task 6  
-Practioe!!!ass
+Practice!!!
 
 
 
@@ -106,8 +106,6 @@ ON NODE:
 
 - service status kubelet to ensure kubelt is good and running as kubeadm join doesn start the service automatically.
 - kubectl get nodes to prove the node joined
-
-
 
 
 # Taks 9
