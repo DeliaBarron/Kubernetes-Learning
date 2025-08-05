@@ -8,7 +8,7 @@
 - [ ] Configure Resource Management (requests and limits)
 - [ ] Use StatefulSets with Resource Management
 - [ ] Use both Deployments and StatefulSets together
-- [ ] Add VolumeMounts to all Deployments and StatefulSets
+- [ ] Add VolumeMounts to all Deployments and StatefulSets, daemonsets
 - [ x] Create a Service (NodePort type)
   - [ ] Link container/pod port to Service using `targetPort` and `nodePort`   link pod?
 - [ ] Use Helm to install a chart
@@ -34,3 +34,9 @@
 to do-labs in  chatgpt 
  different ways i could get assked to apply netpolicies to pods or deployments or enabling pods communication w netpols is it posible w daemonsets? stsfsets?? replicasets? idk
 
+
+
+
+What is the difference of cluser role binding and a role binding?
+
+We can only create one cluster role or multiple roles for different namespaces.
