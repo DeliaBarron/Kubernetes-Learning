@@ -86,6 +86,18 @@ At Hub2 ProxySQL is the cause.
 ###  PGPool
 to many connections in Geo
 
+### PVC getting full
+We had the prometheus monitoring pvc getting full and was causing alerts of kubelet, kubeAPI and more as prometheus was unable to detect and do scraping anymore. So metrics we getting lost.
+
+Check the mountPath of the pvc on monitoring namespace:
+- `k get pod prometheus-pod -oyaml`
+- Execute into the pod and go to the mountPath to examinate the usage with `du -sch *`
+- Compare this values and examinate them against the pvc total capacity. (`k get pvc`).
+
+- If the pvc is using PV of type rbd we can increase the disk capacity. 
+
+> **Openebs** PV can't be modified as the **rbd** PV's. 
+
 
 
 ### Opensearch
