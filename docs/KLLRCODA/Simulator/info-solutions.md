@@ -53,7 +53,7 @@ To apply kustomize:
 
 
 # Task 6  
-Practice!!!
+  
 
 
 

@@ -11,12 +11,12 @@ WE need to upgrade the dashboards components too for Opensearch
 
 
 
-
+# Velero
 
 make old values and 
 
 velero values especifics: 
-provider has to be was
+provider has to be aws
 the bucket location
 config for the bucket
 
@@ -25,3 +25,6 @@ config for the bucket
 servicecs and the service  monitors have the `release` prometheus labels
 
 # CEP
+
+
+

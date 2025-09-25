@@ -1,6 +1,33 @@
 # Workshop
 
 ## Alerts
+
+### Backup
+#### Trino /postrges 
+Error at backup, pod on ChrashLopp or failing
+
+For postgres we set up the backups scripts ourselves and we created the docker (built) image. When the backup-script is done we dump the data to minio.
+To run the script we need the image to use the aws cli to dump it to our buckets.
+
+We have the postgres backup image on Gitlab container registry. This registries have a token and is on the secrets for trino and postgres. 
+You can verify there the expiry date for them on gitlab or by doung `docker login` (user and password are at secret as well).
+
+
+Create secret for registry access:
+
+```
+kubectl create secret docker-registry cloudwifi-staging-image-pull --docker-server=registry.admin.hundertserver.com:443 --docker-username=cloudwifi-staging-image-pull --docker-password=$PASSWORD
+```
+Don't forget to delete the old one.
+
+
+After creating the new secret with the new token you can go ahead and delete the backup pods at postgres namespace.
+
+> **The same process is for both Trino namespaces backup issues.**
+
+
+
+
 ### Memory Usage 
 
 Cloudwifi: They run at night deployments at Trino
@@ -9,7 +36,7 @@ Go to the dashboards: Federix> Node of problem
 trino and mongodb are expected
 
 
-WE see tha topenEBD is usning alot of memory in one node only so we can:
+WE see that openEBS is usning a lot of memory in one node only so we can:
 - REstart/delete Pod
 
 ### Disk Usage in Node
@@ -38,13 +65,22 @@ If the answer is to clean the images that are not used the following commands ar
     - `crictl rm --help`
 
 
-### High loadin node worker
+### High loading node 
+### workers
 
 go to grafana >> see what pod is using more CPU
 Create a ticket saying all the pods that are usin more cpu and ask what we do
 
 
 This procedure is for when we have a constante cpu usage
+
+### HUB2 node  usage to high.
+At Hub2 ProxySQL is the cause.
+
+- Check the instance that is getting high on load.
+- Restart ProxySQL by deleting all the pods of that node trigering this high usage:
+- `k get pod -o wide` at `mysql-production`
+
 
 
 ###  PGPool
@@ -81,6 +117,17 @@ then u will see the hash value changes.
 
 
 
+
+# restic
+bavkups of data of the PVCs
+
+mongo and maria and mysql: run a script to do a dump of the data
+
+
+
+
+
+
 # velero 
 backups the resources files
 
@@ -92,16 +139,8 @@ so with velero CLI you can do
 - k get backups
 
 
-# restic
-bavkups of data of the PVCs
 
-mongo and maria and mysql: run a script to do a dump of the data
-
-
-
-
-
---------------------------------
+-------------------------------
 improve alert to get the node name
 just for Daisy do a table of what we manage on any cluster
 all the alerts in the slack k8s moitoring are from all the namespaces WE manage.
@@ -110,6 +149,4 @@ From FREDERIX we have alerts from ALL namespaces
 so we have frederix-monitoring an these alerts require a customer ticket or slack channel 
 
 Work on K8s documentation
-
-
 

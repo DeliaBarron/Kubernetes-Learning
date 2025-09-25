@@ -14,7 +14,8 @@ Opensearch for logs of resources
 
 > OOMkilled pod requires a customer ticker to see why it was killed
 
-### etcdDatabaseHighFragmentationRatio### etcd
+### etcd
+### etcdDatabaseHighFragmentationRatio 
 - compare etcd data hash
 ```
 kubectl -n kube-system exec etcd-controlplane1.cloudwifi-csn-prod.srservers.net  -it -- etcdctl --write-out=table --cluster  --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/peer.crt --key=/etc/kubernetes/pki/etcd/peer.key endpoint hashkv
