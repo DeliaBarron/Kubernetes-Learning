@@ -27,6 +27,11 @@ After creating the new secret with the new token you can go ahead and delete the
 
 
 
+## CPU Overcommited
+This alert doesn't look at actual CPU or disk usage on the node - it only cares about CPU requests vs allocable CPU on the node.
+
+as it is Kube  Rule is not about pne single node. Is a cluster node alert.
+
 
 ### Memory Usage 
 
@@ -161,4 +166,20 @@ From FREDERIX we have alerts from ALL namespaces
 so we have frederix-monitoring an these alerts require a customer ticket or slack channel 
 
 Work on K8s documentation
+
+----
+# K8s Troubleshooting
+## PVC FULL
+k get pvc
+
+for the rbd storageclass
+
+k describe storaclass + name of this
+
+and we can see the allow extension :  k describe storageclasses.storage.k8s.io rbd.ssd.k8s.daisy.fra1  and we can see : AllowVolumeExpansion:  True
+
+then edit the pvc and expand the storage to what we need
+
+then delete the pod is using the pbv and then we can do k get pvc to see the capacity changed 
+then we can get /execute the pod that used this pvc and we can check the du sch* so we can see the size also changed there.
 
